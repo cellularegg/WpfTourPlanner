@@ -6,8 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Common" />
-      <Folder Include="Dao" />
+      <ProjectReference Include="..\WpfTourPlanner.ConfigurationManager\WpfTourPlanner.ConfigurationManager.csproj" />
+      <ProjectReference Include="..\WpfTourPlanner.Models\WpfTourPlanner.Models.csproj" />
     </ItemGroup>
 
 </Project>

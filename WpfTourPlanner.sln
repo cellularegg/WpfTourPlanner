@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTourPlanner.DataAccessLa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTourPlanner.Test", "WpfTourPlanner.Test\WpfTourPlanner.Test.csproj", "{EFEEB2CC-29C0-4DE4-A5D5-9781F6EA87FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTourPlanner.ConfigurationManager", "WpfTourPlanner.ConfigurationManager\WpfTourPlanner.ConfigurationManager.csproj", "{651544CB-A47E-4B5C-851A-D70D4B762561}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{EFEEB2CC-29C0-4DE4-A5D5-9781F6EA87FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFEEB2CC-29C0-4DE4-A5D5-9781F6EA87FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFEEB2CC-29C0-4DE4-A5D5-9781F6EA87FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{651544CB-A47E-4B5C-851A-D70D4B762561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{651544CB-A47E-4B5C-851A-D70D4B762561}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{651544CB-A47E-4B5C-851A-D70D4B762561}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{651544CB-A47E-4B5C-851A-D70D4B762561}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

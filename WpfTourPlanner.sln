@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTourPlanner", "WpfTourPlanner\WpfTourPlanner.csproj", "{7DF23D80-0352-4394-897C-1C87D8126802}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTourPlanner.Models", "WpfTourPlanner.Models\WpfTourPlanner.Models.csproj", "{FF089A1C-41FC-417C-8103-450445CA09C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTourPlanner.BusinessLayer", "WpfTourPlanner.BusinessLayer\WpfTourPlanner.BusinessLayer.csproj", "{6666FA36-27DC-49BB-9483-23323ACC1C43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTourPlanner.DataAccessLayer", "WpfTourPlanner.DataAccessLayer\WpfTourPlanner.DataAccessLayer.csproj", "{0BCA9B3B-B083-4E78-AB53-CE85896727D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTourPlanner.DataAccessLayer.PostgressSqlServer", "WpfTourPlanner.DataAccessLayer.PostgressSqlServer\WpfTourPlanner.DataAccessLayer.PostgressSqlServer.csproj", "{7299DAB9-7508-4346-B9BB-ADE9771114ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTourPlanner.Test", "WpfTourPlanner.Test\WpfTourPlanner.Test.csproj", "{EFEEB2CC-29C0-4DE4-A5D5-9781F6EA87FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DF23D80-0352-4394-897C-1C87D8126802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DF23D80-0352-4394-897C-1C87D8126802}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DF23D80-0352-4394-897C-1C87D8126802}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DF23D80-0352-4394-897C-1C87D8126802}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF089A1C-41FC-417C-8103-450445CA09C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF089A1C-41FC-417C-8103-450445CA09C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF089A1C-41FC-417C-8103-450445CA09C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF089A1C-41FC-417C-8103-450445CA09C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6666FA36-27DC-49BB-9483-23323ACC1C43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6666FA36-27DC-49BB-9483-23323ACC1C43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6666FA36-27DC-49BB-9483-23323ACC1C43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6666FA36-27DC-49BB-9483-23323ACC1C43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BCA9B3B-B083-4E78-AB53-CE85896727D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BCA9B3B-B083-4E78-AB53-CE85896727D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BCA9B3B-B083-4E78-AB53-CE85896727D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BCA9B3B-B083-4E78-AB53-CE85896727D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7299DAB9-7508-4346-B9BB-ADE9771114ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7299DAB9-7508-4346-B9BB-ADE9771114ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7299DAB9-7508-4346-B9BB-ADE9771114ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7299DAB9-7508-4346-B9BB-ADE9771114ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFEEB2CC-29C0-4DE4-A5D5-9781F6EA87FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFEEB2CC-29C0-4DE4-A5D5-9781F6EA87FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFEEB2CC-29C0-4DE4-A5D5-9781F6EA87FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFEEB2CC-29C0-4DE4-A5D5-9781F6EA87FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

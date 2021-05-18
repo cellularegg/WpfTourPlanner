@@ -11,4 +11,16 @@ Time Tracking:
 | 15-may-21 | 9         | CI/CD Pipeline                                |
 | 16-may-21 | 6         | CI/CD Pipeline                                |
 | 17-may-21 | 3         | started from scrath with propper architecture |
+| 18-may-21 | 3         | Added first bindings to UI                    |
 
+
+## Todo
+* Mapquest api
+* import export
+* config file
+* custom ui component
+* CRUD Tours + logs
+* add logging
+* Write unit tests
+* error handling
+* Navigation

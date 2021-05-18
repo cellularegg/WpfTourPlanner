@@ -3,6 +3,14 @@
     <PropertyGroup>
         <TargetFramework>net5.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
+        <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+        <Platforms>x86;x64</Platforms>
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WpfTourPlanner.DataAccessLayer.PostgressSqlServer\WpfTourPlanner.DataAccessLayer.PostgressSqlServer.csproj" />
+      <ProjectReference Include="..\WpfTourPlanner.DataAccessLayer\WpfTourPlanner.DataAccessLayer.csproj" />
+      <ProjectReference Include="..\WpfTourPlanner.Models\WpfTourPlanner.Models.csproj" />
+    </ItemGroup>
 
 </Project>

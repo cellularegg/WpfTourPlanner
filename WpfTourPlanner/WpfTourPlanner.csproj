@@ -4,6 +4,13 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>net5.0-windows</TargetFramework>
         <UseWPF>true</UseWPF>
+        <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+        <Platforms>x86;x64</Platforms>
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WpfTourPlanner.BusinessLayer\WpfTourPlanner.BusinessLayer.csproj" />
+      <ProjectReference Include="..\WpfTourPlanner.Models\WpfTourPlanner.Models.csproj" />
+    </ItemGroup>
 
 </Project>

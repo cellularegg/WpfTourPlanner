@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfTourPlanner.BusinessLayer;
+using WpfTourPlanner.ViewModels;
 
 namespace WpfTourPlanner
 {
@@ -23,6 +25,7 @@ namespace WpfTourPlanner
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new TourPlannerMainVm(TourPlannerFactory.GetTourPlannerManager());
         }
     }
 }

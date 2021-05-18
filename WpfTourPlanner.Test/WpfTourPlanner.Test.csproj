@@ -14,10 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WpfTourPlanner.BusinessLayer\WpfTourPlanner.BusinessLayer.csproj" />
-      <ProjectReference Include="..\WpfTourPlanner.ConfigurationManager\WpfTourPlanner.ConfigurationManager.csproj" />
       <ProjectReference Include="..\WpfTourPlanner.DataAccessLayer.PostgressSqlServer\WpfTourPlanner.DataAccessLayer.PostgressSqlServer.csproj" />
-      <ProjectReference Include="..\WpfTourPlanner.DataAccessLayer\WpfTourPlanner.DataAccessLayer.csproj" />
-      <ProjectReference Include="..\WpfTourPlanner.Models\WpfTourPlanner.Models.csproj" />
       <ProjectReference Include="..\WpfTourPlanner\WpfTourPlanner.csproj" />
     </ItemGroup>
 

@@ -5,7 +5,7 @@ using WpfTourPlanner.Models;
 
 namespace WpfTourPlanner.BusinessLayer
 {
-    public interface ITourPlanner
+    public interface ITourPlannerManager
     {
         IEnumerable<Tour> GetTours();
 

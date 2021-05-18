@@ -5,4 +5,10 @@
         <UseWPF>true</UseWPF>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\WpfTourPlanner.DataAccessLayer.PostgressSqlServer\WpfTourPlanner.DataAccessLayer.PostgressSqlServer.csproj" />
+      <ProjectReference Include="..\WpfTourPlanner.DataAccessLayer\WpfTourPlanner.DataAccessLayer.csproj" />
+      <ProjectReference Include="..\WpfTourPlanner.Models\WpfTourPlanner.Models.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -8,7 +8,7 @@ using WpfTourPlanner.Models;
 
 namespace WpfTourPlanner.BusinessLayer
 {
-    public class TourPlannerImpl : ITourPlanner
+    public class TourPlannerManagerImpl : ITourPlannerManager
 
     {
         public IEnumerable<Tour> GetTours()

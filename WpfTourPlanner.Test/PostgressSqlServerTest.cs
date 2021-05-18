@@ -5,7 +5,7 @@ using NUnit.Framework;
 using WpfTourPlanner.DataAccessLayer.Common;
 using WpfTourPlanner.DataAccessLayer.PostgressSqlServer;
 
-namespace WpfIntro.Test
+namespace WpfTourPlanner.Test
 {
     public class PostgressSqlServerTest
     {

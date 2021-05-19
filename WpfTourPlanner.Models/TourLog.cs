@@ -41,10 +41,10 @@ namespace WpfTourPlanner.Models
         public double TemperatureInC { get; set; }
         public int Breaks { get; set; }
         public int Steps { get; set; }
-        public Tour LogTour { get; set; }
+        public int TourId { get; set; }
 
-        public TourLog(int id, string report, DateTime logDateTime, double totalTimeInH,double heartRate,
-            double averageSpeedInKmH, double temperatureInC, int breaks, int steps, int rating, Tour logTour)
+        public TourLog(int id, string report, DateTime logDateTime, double totalTimeInH, double heartRate,
+            double averageSpeedInKmH, double temperatureInC, int breaks, int steps, int rating, int tourId)
         {
             Id = id;
             Report = report;
@@ -56,15 +56,15 @@ namespace WpfTourPlanner.Models
             Breaks = breaks;
             Steps = steps;
             Rating = rating;
-            LogTour = logTour;
+            TourId = tourId;
         }
 
         public override string ToString()
         {
             return $"{nameof(Id)}: {Id}, {nameof(Report)}: {Report}, {nameof(LogDateTime)}: {LogDateTime}, " +
-                   $"{nameof(TotalTimeInH)}: {TotalTimeInH}, {nameof(Rating)}: {Rating}, {nameof(LogTour)}: " +
-                   $"{LogTour}, {nameof(HeartRate)}: {HeartRate}, {nameof(AverageSpeedInKmH)}: {AverageSpeedInKmH}, " +
-                   $"{nameof(TemperatureInC)}: {TemperatureInC}, {nameof(Breaks)}: {Breaks}, {nameof(Steps)}: {Steps}";
+                   $"{nameof(TotalTimeInH)}: {TotalTimeInH}, {nameof(Rating)}: {Rating}, {nameof(HeartRate)}: " +
+                   $"{HeartRate}, {nameof(AverageSpeedInKmH)}: {AverageSpeedInKmH}, {nameof(TemperatureInC)}: " +
+                   $"{TemperatureInC}, {nameof(Breaks)}: {Breaks}, {nameof(Steps)}: {Steps}, {nameof(TourId)}: {TourId}";
         }
     }
 }

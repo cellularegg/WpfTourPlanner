@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="WpfTourPlanner.UserControls.ImageUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             x:Name="imageUserControl"
+             xmlns:viewModels="clr-namespace:WpfTourPlanner.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewModels:TourPlannerMainVm}"
+
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!-- <Label Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding CurrentTour.Information}"/> -->
+        <Image Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="{Binding CurrentTour.Information}"
+               Source="{Binding CurrentTour.Information}" Stretch="Uniform" />
+        <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding CurrentTour.Name}"></TextBlock>
+    </Grid>
+</UserControl>

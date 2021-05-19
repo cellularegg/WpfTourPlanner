@@ -351,3 +351,6 @@ MigrationBackup/
 
 # Rider
 .idea/
+
+# for local testing only:
+WpfTourPlanner.Test/OtherTests.cs

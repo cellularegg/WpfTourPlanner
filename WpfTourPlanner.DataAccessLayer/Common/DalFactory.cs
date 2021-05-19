@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
-using WpfTourPlanner.ConfigurationManager;
 using WpfTourPlanner.DataAccessLayer.Dao;
 
 namespace WpfTourPlanner.DataAccessLayer.Common
@@ -16,7 +15,11 @@ namespace WpfTourPlanner.DataAccessLayer.Common
 
         static DalFactory()
         {
-            _assemblyName = CustomConfigurationManager.Instance.AssemblyName;
+            _assemblyName = ConfigurationManager.AppSettings["DalSqlAssembly"];
+            // _assemblyName = "WpfTourPlanner.DataAccessLayer.PostgressSqlServer";
+            // _assemblyName = CustomConfigurationManager.Instance.AssemblyName;
+            Debug.WriteLine("---------------------------------------------------------------------------------");
+            Debug.WriteLine(_assemblyName);
             _dalAssembly = Assembly.Load(_assemblyName);
         }
 
@@ -32,9 +35,13 @@ namespace WpfTourPlanner.DataAccessLayer.Common
 
         private static IDatabase CreateDatabase()
         {
-            // string connectionString =
-            // ConfigurationManager.ConnectionStrings["PostgressSqlConnectionString"].ConnectionString;
-            string connectionString = CustomConfigurationManager.Instance.ConnectionString;
+            string connectionString =
+                ConfigurationManager.ConnectionStrings["PostgressSqlConnectionString"].ConnectionString;
+            Debug.WriteLine("---------------------------------------------------------------------------------");
+            Debug.WriteLine(connectionString);
+            // connectionString =
+                // "Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=mysecretpassword;";
+            // string connectionString = CustomConfigurationManager.Instance.ConnectionString;
             return CreateDatabase(connectionString);
         }
 
@@ -56,7 +63,7 @@ namespace WpfTourPlanner.DataAccessLayer.Common
         {
             string className = _assemblyName + ".TourLogPostgressDao";
             Type tourLogType = _dalAssembly.GetType(className);
-            return Activator.CreateInstance(tourLogType) as ITourLogDao; 
+            return Activator.CreateInstance(tourLogType) as ITourLogDao;
         }
     }
 }

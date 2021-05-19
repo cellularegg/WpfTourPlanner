@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
 using System.Globalization;
@@ -14,7 +15,7 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
     public class TourLogPostgressDao : ITourLogDao
     {
         private const string SQL_FIND_BY_ID = "SELECT * FROM public.\"TourLog\" WHERE \"Id\"=@Id;";
-        private const string SQL_FIND_BY_MEDIA_ITEM = "SELECT * FROM public.\"TourLog\" WHERE \"TourId\"=@TourId;";
+        private const string SQL_FIND_BY_TOUR = "SELECT * FROM public.\"TourLog\" WHERE \"TourId\"=@TourId;";
 
         private const string SQL_INSERT_NEW_TOURLOG = "INSERT INTO public.\"TourLog\" (\"Report\", \"LogDateTime\", " +
                                                       "\"TotalTimeInH\", \"Rating\", \"HeartRate\", " +
@@ -24,22 +25,19 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
                                                       " @TemperatureInC, @Breaks, @Steps, @TourId) RETURNING \"Id\";";
 
         private IDatabase _database;
-        private ITourDao _tourDao;
 
         public TourLogPostgressDao()
         {
             _database = DalFactory.GetDatabase();
-            _tourDao = DalFactory.CreateTourDao();
         }
 
-        public TourLogPostgressDao(IDatabase database, ITourDao tourDao)
+        public TourLogPostgressDao(IDatabase database)
         {
             _database = database;
-            _tourDao = tourDao;
         }
 
         public TourLog AddNewTourLog(string report, DateTime logDateTime, double totalTimeInH, int rating,
-            double heartRate, double averageSpeedInKmH, double temperatureInC, int breaks, int steps, Tour logTour)
+            double heartRate, double averageSpeedInKmH, double temperatureInC, int breaks, int steps, int tourId)
         {
             DbCommand insertCommand = _database.CreateCommand(SQL_INSERT_NEW_TOURLOG);
             _database.DefineParameter(insertCommand, "@Report", DbType.String, report);
@@ -51,7 +49,7 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             _database.DefineParameter(insertCommand, "@TemperatureInC", DbType.Double, temperatureInC);
             _database.DefineParameter(insertCommand, "@Breaks", DbType.Int32, breaks);
             _database.DefineParameter(insertCommand, "@Steps", DbType.Int32, steps);
-            _database.DefineParameter(insertCommand, "@TourId", DbType.Int32, logTour.Id);
+            _database.DefineParameter(insertCommand, "@TourId", DbType.Int32, tourId);
             return FindById(_database.ExecuteScalar(insertCommand));
         }
 
@@ -64,15 +62,20 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
         }
 
 
-        public IEnumerable<TourLog> GetLogsForTour(Tour tour)
+        public IList<TourLog> GetLogsForTour(Tour tour)
         {
-            DbCommand findByTourIdCommand = _database.CreateCommand(SQL_FIND_BY_ID);
-            _database.DefineParameter(findByTourIdCommand, "@tourId", DbType.Int32, tour.Id);
-            IEnumerable<TourLog> tourLogs = QueryTourLogsFromDb(findByTourIdCommand);
+            return GetLogsByTourId(tour.Id);
+        }
+
+        public IList<TourLog> GetLogsByTourId(int tourId)
+        {
+            DbCommand findByTourIdCommand = _database.CreateCommand(SQL_FIND_BY_TOUR);
+            _database.DefineParameter(findByTourIdCommand, "@TourId", DbType.Int32, tourId);
+            IList<TourLog> tourLogs = QueryTourLogsFromDb(findByTourIdCommand);
             return tourLogs;
         }
 
-        private IEnumerable<TourLog> QueryTourLogsFromDb(DbCommand command)
+        private IList<TourLog> QueryTourLogsFromDb(DbCommand command)
         {
             List<TourLog> tourLogs = new List<TourLog>();
             using (IDataReader reader = _database.ExecuteReader(command))
@@ -90,7 +93,7 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
                         (int) reader["Breaks"],
                         (int) reader["Steps"],
                         (int) reader["Rating"],
-                        _tourDao.FindById((int) reader["TourId"])
+                        (int) reader["TourId"]
                     ));
                 }
             }

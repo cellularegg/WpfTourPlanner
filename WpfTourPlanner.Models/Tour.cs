@@ -12,8 +12,8 @@ namespace WpfTourPlanner.Models
         public string Information { get; set; }
         public double DistanceInKm { get; set; }
 
-        public IEnumerable<TourLog> Logs { get; set; }
-        public Tour(int id, string name, string description, string information, double distanceInKm, IEnumerable<TourLog> logs)
+        public IList<TourLog> Logs { get; set; }
+        public Tour(int id, string name, string description, string information, double distanceInKm, IList<TourLog> logs)
         {
             Id = id;
             Name = name;

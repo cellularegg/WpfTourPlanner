@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using WpfTourPlanner.DataAccessLayer.Common;
 using WpfTourPlanner.DataAccessLayer.Dao;
@@ -14,7 +15,14 @@ namespace WpfTourPlanner.BusinessLayer
         public IEnumerable<Tour> GetTours()
         {
             ITourDao tourDao = DalFactory.CreateTourDao();
-            return tourDao.GetTours();
+            // ToDo check if this is ok
+            IEnumerable<Tour> tours =  tourDao.GetTours();
+            foreach (Tour tour in tours.ToArray())
+            {
+                tour.Logs = new ObservableCollection<TourLog>(tour.Logs as List<TourLog> ?? new List<TourLog>());
+            }
+
+            return tours;
         }
 
         public IEnumerable<Tour> Search(string searchQuery)
@@ -39,8 +47,5 @@ namespace WpfTourPlanner.BusinessLayer
             return tourLogDao.AddNewTourLog(report, logDateTime, totalTimeInH, rating, heartRate, averageSpeedInKmH,
                 temperatureInC, breaks, steps, logTour.Id);
         }
-        
-        
-
     }
 }

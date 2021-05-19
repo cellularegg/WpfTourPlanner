@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
+using System.Linq;
 using System.Windows.Input;
 using WpfTourPlanner.BusinessLayer;
 using WpfTourPlanner.Models;
@@ -22,6 +21,10 @@ namespace WpfTourPlanner.ViewModels
         public ICommand ClearCommand { get; }
 
         public ICommand UpdateTourCommand { get; }
+
+        public ICommand DuplicateTourCommand { get; }
+
+        public ICommand DuplicateTourLogCommand { get; }
 
         // TODO add other commands
         public ObservableCollection<Tour> Tours { get; private set; }
@@ -160,13 +163,45 @@ namespace WpfTourPlanner.ViewModels
                 FillTourList();
             });
 
+            this.DuplicateTourCommand = new RelayCommand(o =>
+            {
+                if (_currentTour != null)
+                {
+                    Tour newlyCreatedTour = _tourPlannerManager.CreateTour(CurrentTour.Name + " Copy", CurrentTour.Description,
+                        CurrentTour.Information, CurrentTour.DistanceInKm);
+                    Tours.Add(newlyCreatedTour);
+                    TourLog newlyCreatedLog;
+                    foreach (TourLog log in CurrentTour.Logs)
+                    {
+                        newlyCreatedLog = _tourPlannerManager.CreateTourLog(log.Report + " Copy", log.LogDateTime, log.TotalTimeInH, 
+                            log.Rating, log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps, 
+                            newlyCreatedTour);
+                        newlyCreatedTour.Logs.Add(newlyCreatedLog);
+                    }
+                }
+            }, new Predicate<object>(CanExecuteDuplicateTour));
+
+            this.DuplicateTourLogCommand = new RelayCommand(
+                o =>
+                {
+                    TourLog log = _tourPlannerManager.CreateTourLog(CurrentLog.Report + " Copy", CurrentLog.LogDateTime,
+                        CurrentLog.TotalTimeInH, CurrentLog.Rating, CurrentLog.HeartRate, CurrentLog.AverageSpeedInKmH,
+                        CurrentLog.TemperatureInC, CurrentLog.Breaks, CurrentLog.Steps, CurrentTour);
+                    CurrentTour.Logs.Add(log);
+                }, new Predicate<object>(CanExecuteDuplicateTourLog));
+
             this.UpdateTourCommand = new RelayCommand(o =>
             {
                 // TODO Actually update!!!
                 Debug.WriteLine("Update Tour");
-            }, new Predicate<object>(IsInputValid));
+            }, new Predicate<object>(CanExecuteUpdateTour));
 
             FillTourList();
+        }
+
+        private bool CanExecuteDuplicateTourLog(object obj)
+        {
+            return CurrentLog != null && CurrentTour != null;
         }
 
         private void FillTourList()
@@ -177,7 +212,12 @@ namespace WpfTourPlanner.ViewModels
             }
         }
 
-        public bool IsInputValid(object param)
+        private bool CanExecuteDuplicateTour(object param)
+        {
+            return CurrentTour != null;
+        }
+
+        private bool CanExecuteUpdateTour(object param)
         {
             return !String.IsNullOrWhiteSpace(CurrentTour?.Name) &&
                    !String.IsNullOrWhiteSpace(CurrentTour?.Description) && CurrentTour?.DistanceInKm > 0;

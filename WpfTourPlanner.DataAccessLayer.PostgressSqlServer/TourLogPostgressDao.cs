@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
 using System.Globalization;
@@ -61,20 +62,20 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
         }
 
 
-        public IEnumerable<TourLog> GetLogsForTour(Tour tour)
+        public IList<TourLog> GetLogsForTour(Tour tour)
         {
             return GetLogsByTourId(tour.Id);
         }
 
-        public IEnumerable<TourLog> GetLogsByTourId(int tourId)
+        public IList<TourLog> GetLogsByTourId(int tourId)
         {
             DbCommand findByTourIdCommand = _database.CreateCommand(SQL_FIND_BY_TOUR);
             _database.DefineParameter(findByTourIdCommand, "@TourId", DbType.Int32, tourId);
-            IEnumerable<TourLog> tourLogs = QueryTourLogsFromDb(findByTourIdCommand);
+            IList<TourLog> tourLogs = QueryTourLogsFromDb(findByTourIdCommand);
             return tourLogs;
         }
 
-        private IEnumerable<TourLog> QueryTourLogsFromDb(DbCommand command)
+        private IList<TourLog> QueryTourLogsFromDb(DbCommand command)
         {
             List<TourLog> tourLogs = new List<TourLog>();
             using (IDataReader reader = _database.ExecuteReader(command))

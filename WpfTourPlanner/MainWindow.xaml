@@ -8,7 +8,8 @@
         xmlns:userControls="clr-namespace:WpfTourPlanner.UserControls"
         d:DataContext="{d:DesignInstance Type=viewModels:TourPlannerMainVm}"
         mc:Ignorable="d"
-        Title="WpfTourPlanner" Height="450" Width="800">
+        Title="WpfTourPlanner" Height="720" Width="1280">
+    <!-- Emoji reference: https://www.unicode.org/emoji/charts/full-emoji-list.html -->
     <Grid ShowGridLines="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -25,6 +26,7 @@
             <ColumnDefinition Width="Auto" MinWidth="35" />
             <ColumnDefinition Width="Auto" MinWidth="35" />
             <ColumnDefinition Width="Auto" MinWidth="35" />
+            <ColumnDefinition Width="Auto" MinWidth="35" />
             <ColumnDefinition Width="Auto" MinWidth="25" />
             <ColumnDefinition Width="1*" MinWidth="25" />
             <ColumnDefinition Width="1*" MinWidth="25" />
@@ -33,7 +35,7 @@
             <ColumnDefinition Width="Auto" MinWidth="25" />
             <ColumnDefinition Width="Auto" MinWidth="25" />
         </Grid.ColumnDefinitions>
-        <DockPanel Width="Auto" Grid.Row="0" Grid.ColumnSpan="11">
+        <DockPanel Width="Auto" Grid.Row="0" Grid.ColumnSpan="12">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
                     <MenuItem Header="_Export" />
@@ -46,72 +48,59 @@
             </Menu>
         </DockPanel>
         <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">Search:</Label>
-        <TextBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="7" VerticalAlignment="Center"
+        <TextBox Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="7" VerticalAlignment="Center"
                  HorizontalContentAlignment="Stretch" Margin="5,2,5,0"
                  Name="txtSearch" Text="{Binding SearchQuery, Mode=TwoWay}" />
-        <Button Grid.Row="1" Grid.Column="9" Width="Auto" HorizontalAlignment="Center" Margin="5, 2, 5, 0"
-                Command="{Binding SearchCommand}" Padding="3">
-            🔍
-        </Button>
         <Button Grid.Row="1" Grid.Column="10" Width="Auto" HorizontalAlignment="Center" Margin="5, 2, 5, 0"
-                Command="{Binding ClearCommand}" Padding="3">
-            Clear
-        </Button>
-        <Separator Grid.Row="2" Grid.ColumnSpan="11" VerticalAlignment="Top" Height="Auto" />
+                Command="{Binding SearchCommand}" Padding="3" Content="🔍" />
+        <Button Grid.Row="1" Grid.Column="11" Width="Auto" HorizontalAlignment="Center" Margin="5, 2, 5, 0"
+                Command="{Binding ClearCommand}" Padding="3" Content="Clear"/>
+        <Separator Grid.Row="2" Grid.ColumnSpan="12" VerticalAlignment="Top" Height="Auto" />
         <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Width="Auto" Height="Auto" VerticalAlignment="Center"
-               HorizontalAlignment="Left" Margin="5,2,5,2">
-            Tours
-        </Label>
+               HorizontalAlignment="Left" Margin="5,2,5,2" Content="Tours" />
         <Button Grid.Row="2" Grid.Column="1" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center"
-                Width="25" Padding="3" Margin="5,7,5,2">
-            +
-        </Button>
+                Width="25" Padding="3" Margin="5,7,5,2" Content="+"/>
         <Button Grid.Row="2" Grid.Column="2" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center"
-                Width="25" Padding="3" Margin="5,7,5,2">
-            -
-        </Button>
-        <Button Grid.Row="2" Grid.Column="3" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center"
-                Width="25" Padding="3" Margin="5,7,7,2">
-            ✏
-        </Button>
-        <ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="5" Margin="5,5,7,5"
+                Width="25" Padding="3" Margin="5,7,5,2" Content="-" />
+        <Button Grid.Row="2" Grid.Column="3" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Left"
+                Width="25" Padding="3" Margin="5,7,5,2" Content="✏" />
+        <Button Grid.Row="2" Grid.Column="4" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Left"
+                Width="25" Padding="3" Margin="5,7,7,2" Content="📋"
+                Command="{Binding DuplicateTourCommand}" />
+        <ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" Grid.RowSpan="5" Margin="5,5,7,5"
                   ItemsSource="{Binding Tours}"
                   SelectedItem="{Binding CurrentTour}"
                   DisplayMemberPath="Name"
                   AlternationCount="2" />
-        <GridSplitter Grid.Row="2" Grid.Column="3" Grid.RowSpan="6" Width="5" HorizontalAlignment="Right"
+        <GridSplitter Grid.Row="2" Grid.Column="4" Grid.RowSpan="6" Width="5" HorizontalAlignment="Right"
                       ResizeDirection="Columns" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext"
                       ToolTip="Drag vertically to resize" />
 
-        <Label Grid.Row="2" Grid.Column="4" Width="Auto" HorizontalAlignment="Left">Name:</Label>
-        <TextBox Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
+        <Label Grid.Row="2" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Name:</Label>
+        <TextBox Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
                  Text="{Binding TourName}" />
-        <Button Grid.Row="2" Grid.Column="10" Margin="5,5,5,5" Command="{Binding UpdateTourCommand}">Update</Button>
-        <Label Grid.Row="4" Grid.Column="4" Width="Auto" HorizontalAlignment="Left">Distance In Km:</Label>
-        <TextBox Grid.Row="3" Grid.Column="5" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
+        <Button Grid.Row="2" Grid.Column="11" Margin="5,5,5,5" Command="{Binding UpdateTourCommand}">Update</Button>
+        <Label Grid.Row="4" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Distance In Km:</Label>
+        <TextBox Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
                  TextWrapping="Wrap" AcceptsReturn="True" MinHeight="60" Text="{Binding TourDescription}" />
-        <TextBox Grid.Row="4" Grid.Column="5" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
+        <TextBox Grid.Row="4" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
                  Text="{Binding TourDistance, UpdateSourceTrigger=PropertyChanged}" />
-        <Label Grid.Row="3" Grid.Column="4" Width="Auto" HorizontalAlignment="Left">Desciption:</Label>
-        <userControls:ImageUserControl Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="7" Margin="5,5,5,5" />
-        <GridSplitter Grid.Row="6" Grid.Column="4" Grid.ColumnSpan="7" HorizontalAlignment="Stretch" Height="5"
+        <Label Grid.Row="3" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Desciption:</Label>
+        <userControls:ImageUserControl Grid.Row="5" Grid.Column="5" Grid.ColumnSpan="7" Margin="5,5,5,5" />
+        <GridSplitter Grid.Row="6" Grid.Column="5" Grid.ColumnSpan="7" HorizontalAlignment="Stretch" Height="5"
                       ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" VerticalAlignment="Top"
                       ToolTip="Drag vertically to resize" />
-        <Label Grid.Row="6" Grid.Column="4">Logs</Label>
-        <Button Grid.Row="6" Grid.Column="8" Height="Auto" Width="30" VerticalAlignment="Center"
-                HorizontalAlignment="Center" Margin="5,7,5,0">
-            -
-        </Button>
-        <Button Grid.Row="6" Grid.Column="9" Height="Auto" Width="30" VerticalAlignment="Center"
-                HorizontalAlignment="Center" Margin="5,7,5,0">
-            +
-        </Button>
-        <Button Grid.Row="6" Grid.Column="10" Height="Auto" Width="30" VerticalAlignment="Center"
-                HorizontalAlignment="Center" Margin="5,7,5,0">
-            ✏
-        </Button>
-
-        <DataGrid Grid.Row="7" Grid.Column="4" Grid.ColumnSpan="7" Margin="5,5,5,5" SelectionMode="Single"
+        <Label Grid.Row="6" Grid.Column="5">Logs</Label>
+        <Button Grid.Row="6" Grid.Column="8" Height="25" Width="25" VerticalAlignment="Center"
+                HorizontalAlignment="Right" Margin="5,7,5,0" Content="-" />
+        <Button Grid.Row="6" Grid.Column="9" Height="25" Width="25" VerticalAlignment="Center"
+                HorizontalAlignment="Center" Margin="5,7,5,0" Content="+" />
+        <Button Grid.Row="6" Grid.Column="10" Height="25" Width="25" VerticalAlignment="Center"
+                HorizontalAlignment="Center" Margin="5,7,5,0" Content="✏" />
+        <Button Grid.Row="6" Grid.Column="11" Height="25" Width="25" VerticalAlignment="Center"
+                HorizontalAlignment="Left" Margin="5,7,5,0" Content="📋"
+                Command="{Binding DuplicateTourLogCommand}"/>
+        <DataGrid Grid.Row="7" Grid.Column="5" Grid.ColumnSpan="7" Margin="5,5,5,5" SelectionMode="Single"
                   ItemsSource="{Binding CurrentTour.Logs}" AutoGenerateColumns="False"
                   SelectedItem="{Binding CurrentLog}" AlternationCount="2" IsReadOnly="True">
             <DataGrid.Columns>

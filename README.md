@@ -14,15 +14,17 @@ Time Tracking:
 | 18-may-21 | 3         | Added first bindings to UI                    |
 | 19-may-21 | 3         | custom UI component                           |
 | 19-may-21 | 4         | Added bindings for text fields in UI          |
+| 19-may-21 | 3         | Added copy feature for tours and logs         |
 
 
 ## Todo
 * Mapquest api
 * import export
-* ~~config file~~ -> using App.confing
 * CRUD Tours + logs
 * add logging
 * Write unit tests
 * error handling
 * Navigation
+* pdf report generation
 * ~~custom ui component~~ -> done image + caption
+* ~~config file~~ -> using App.confing

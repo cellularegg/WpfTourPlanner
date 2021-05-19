@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
 using WpfTourPlanner.BusinessLayer;
@@ -11,15 +13,18 @@ namespace WpfTourPlanner.ViewModels
     public class TourPlannerMainVm : ViewModelBase
     {
         private ITourPlannerManager _tourPlannerManager;
-        private Tour _currentItem;
+        private Tour _currentTour;
         private string _searchQuery;
+        private TourLog _currentLog;
 
-        public ICommand SearchCommand { get;  }
+        public ICommand SearchCommand { get; }
 
-        public ICommand ClearCommand { get;  }
+        public ICommand ClearCommand { get; }
+
+        public ICommand UpdateTourCommand { get; }
 
         // TODO add other commands
-        public ObservableCollection<Tour> Tours { get; set; }
+        public ObservableCollection<Tour> Tours { get; private set; }
 
         public string SearchQuery
         {
@@ -34,15 +39,101 @@ namespace WpfTourPlanner.ViewModels
             }
         }
 
-        public Tour CurrentItem
+        public Tour CurrentTour
         {
-            get => _currentItem;
+            get
+            {
+                Debug.WriteLine($"Get Current Tour {_currentTour}");
+                return _currentTour;
+            }
             set
             {
-                if ((_currentItem != value) && (value != null))
+                if ((_currentTour != value) && (value != null))
                 {
-                    _currentItem = value;
-                    RaisePropertyChangedEvent(nameof(CurrentItem));
+                    _currentTour = value;
+                    RaisePropertyChangedEvent(nameof(CurrentTour));
+                    RaisePropertyChangedEvent(nameof(TourName));
+                    RaisePropertyChangedEvent(nameof(TourDescription));
+                    RaisePropertyChangedEvent(nameof(TourDistance));
+                }
+            }
+        }
+
+        public TourLog CurrentLog
+        {
+            get => _currentLog;
+            set
+            {
+                if ((_currentLog != value) && (value != null))
+                {
+                    _currentLog = value;
+                    RaisePropertyChangedEvent(nameof(CurrentLog));
+                }
+            }
+        }
+
+        public string TourName
+        {
+            get
+            {
+                if (CurrentTour != null)
+                {
+                    Debug.WriteLine($"Current Tour Name: {CurrentTour.Name}");
+                    return CurrentTour.Name;
+                }
+
+                return string.Empty;
+            }
+            set
+            {
+                if (!String.IsNullOrWhiteSpace(value) && value != CurrentTour.Name)
+                {
+                    CurrentTour.Name = value;
+                    RaisePropertyChangedEvent(nameof(TourName));
+                }
+            }
+        }
+
+
+        public string TourDescription
+        {
+            get
+            {
+                if (CurrentTour != null)
+                {
+                    return CurrentTour.Description;
+                }
+
+                return string.Empty;
+            }
+            set
+            {
+                if (!String.IsNullOrWhiteSpace(value) && value != CurrentTour.Description)
+                {
+                    CurrentTour.Description = value;
+                    RaisePropertyChangedEvent(nameof(TourDescription));
+                }
+            }
+        }
+
+        public string TourDistance
+        {
+            get
+            {
+                if (CurrentTour != null)
+                {
+                    return CurrentTour.DistanceInKm.ToString();
+                }
+
+                return string.Empty;
+            }
+            set
+            {
+                if (!String.IsNullOrWhiteSpace(value) && CurrentTour.DistanceInKm.ToString() != value &&
+                    int.TryParse(value, out int val))
+                {
+                    CurrentTour.DistanceInKm = val;
+                    RaisePropertyChangedEvent(nameof(TourDistance));
                 }
             }
         }
@@ -68,7 +159,13 @@ namespace WpfTourPlanner.ViewModels
                 SearchQuery = string.Empty;
                 FillTourList();
             });
-            
+
+            this.UpdateTourCommand = new RelayCommand(o =>
+            {
+                // TODO Actually update!!!
+                Debug.WriteLine("Update Tour");
+            }, new Predicate<object>(IsInputValid));
+
             FillTourList();
         }
 
@@ -78,6 +175,12 @@ namespace WpfTourPlanner.ViewModels
             {
                 Tours.Add(tour);
             }
+        }
+
+        public bool IsInputValid(object param)
+        {
+            return !String.IsNullOrWhiteSpace(CurrentTour?.Name) &&
+                   !String.IsNullOrWhiteSpace(CurrentTour?.Description) && CurrentTour?.DistanceInKm > 0;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Windows.Documents;
 
 namespace WpfTourPlanner.Models
 {
@@ -11,13 +12,15 @@ namespace WpfTourPlanner.Models
         public string Information { get; set; }
         public double DistanceInKm { get; set; }
 
-        public Tour(int id, string name, string description, string information, double distanceInKm)
+        public IEnumerable<TourLog> Logs { get; set; }
+        public Tour(int id, string name, string description, string information, double distanceInKm, IEnumerable<TourLog> logs)
         {
             Id = id;
             Name = name;
             Description = description;
             Information = information;
             DistanceInKm = distanceInKm;
+            Logs = logs;
         }
 
         public override string ToString()

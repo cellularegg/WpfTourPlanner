@@ -37,7 +37,7 @@ namespace WpfTourPlanner.BusinessLayer
         {
             ITourLogDao tourLogDao = DalFactory.CreateTourLogDao();
             return tourLogDao.AddNewTourLog(report, logDateTime, totalTimeInH, rating, heartRate, averageSpeedInKmH,
-                temperatureInC, breaks, steps, logTour);
+                temperatureInC, breaks, steps, logTour.Id);
         }
         
         

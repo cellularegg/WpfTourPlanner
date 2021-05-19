@@ -19,14 +19,18 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         private IDatabase _database;
 
+        private ITourLogDao _tourLogDao;
+
         public TourPostgressDao()
         {
             this._database = DalFactory.GetDatabase();
+            _tourLogDao = DalFactory.CreateTourLogDao();
         }
 
-        public TourPostgressDao(IDatabase database)
+        public TourPostgressDao(IDatabase database, ITourLogDao tourLogDao)
         {
             _database = database;
+            _tourLogDao = tourLogDao;
         }
 
         public Tour AddNewItem(string name, string description, string information, double distanceInKm)
@@ -67,7 +71,8 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
                         (string) reader["Name"],
                         (string) reader["Description"],
                         (string) reader["Information"],
-                        (double) reader["DistanceInKm"]
+                        (double) reader["DistanceInKm"],
+                        _tourLogDao.GetLogsByTourId((int) reader["Id"])
                     ));
                 }
             }

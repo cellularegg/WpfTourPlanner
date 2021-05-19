@@ -12,15 +12,17 @@ Time Tracking:
 | 16-may-21 | 6         | CI/CD Pipeline                                |
 | 17-may-21 | 3         | started from scrath with propper architecture |
 | 18-may-21 | 3         | Added first bindings to UI                    |
+| 19-may-21 | 3         | custom UI component                           |
+| 19-may-21 | 4         | Added bindings for text fields in UI          |
 
 
 ## Todo
 * Mapquest api
 * import export
-* config file
-* custom ui component
+* ~~config file~~ -> using App.confing
 * CRUD Tours + logs
 * add logging
 * Write unit tests
 * error handling
 * Navigation
+* ~~custom ui component~~ -> done image + caption

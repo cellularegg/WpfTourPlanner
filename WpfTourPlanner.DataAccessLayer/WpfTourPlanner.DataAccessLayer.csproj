@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\WpfTourPlanner.ConfigurationManager\WpfTourPlanner.ConfigurationManager.csproj" />
       <ProjectReference Include="..\WpfTourPlanner.Models\WpfTourPlanner.Models.csproj" />
     </ItemGroup>
 

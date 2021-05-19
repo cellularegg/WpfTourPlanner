@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using Npgsql;
 using WpfTourPlanner.DataAccessLayer.Common;
 
@@ -17,12 +18,13 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         public DbCommand CreateCommand(string genericCommandText)
         {
+            Debug.WriteLine($"Creating Command: {genericCommandText}");
             return new NpgsqlCommand(genericCommandText);
         }
 
         public int DeclareParameter(DbCommand command, string name, DbType type)
         {
-            // TODO Unit test to make sure exception is thrown
+            Debug.WriteLine($"Declaring parameter! Command: {command}, Name: {name}, Type: {type}");
             if (!command.Parameters.Contains(name))
             {
                 int index = command.Parameters.Add(new NpgsqlParameter(name, type));
@@ -34,12 +36,15 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         public void DefineParameter(DbCommand command, string name, DbType type, object value)
         {
+            Debug.WriteLine($"Defining parameter! Command: {command}, Name: {name}, Type: {type}, Value: {value}");
+
             int index = DeclareParameter(command, name, type);
             command.Parameters[index].Value = value;
         }
 
         public void SetParameter(DbCommand command, string name, object value)
         {
+            Debug.WriteLine($"Setting parameter! Command: {command}, Name: {name}, Value: {value}");
             if (command.Parameters.Contains(name))
             {
                 command.Parameters[name].Value = value;

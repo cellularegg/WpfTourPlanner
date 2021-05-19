@@ -12,8 +12,8 @@ namespace WpfTourPlanner.Test
         public void TestTourLogRating()
         {
             // Äquivalenzklassentest
-            Tour t = new Tour(1, "name", "description", "img path", 10);
-            TourLog tl = new TourLog(1,"report", DateTime.Now, 10, 100, 10, 30, 0, 1000,0, t);
+            Tour t = new Tour(1, "name", "description", "img path", 10, null);
+            TourLog tl = new TourLog(1,"report", DateTime.Now, 10, 100, 10, 30, 0, 1000,0, t.Id);
             tl.Rating = TourLog.RATING_MAX + 1;
             Assert.AreEqual(TourLog.RATING_MAX, tl.Rating);
             tl.Rating = TourLog.RATING_MAX;

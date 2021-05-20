@@ -19,6 +19,8 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         private const string SQL_UPDATE_TOUR = "UPDATE public.\"Tour\" SET \"Name\"=@Name, \"Description\"=@Description, \"Information\"=@Information, \"DistanceInKm\"=@DistanceInKm WHERE \"Id\"=@Id RETURNING \"Id\";";
 
+        private const string SQL_DELETE_TOUR = "DELETE FROM public.\"Tour\" WHERE \"Id\"=@Id RETURNING \"Id\";";
+
         private IDatabase _database;
 
         private ITourLogDao _tourLogDao;
@@ -54,6 +56,13 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             _database.DefineParameter(updateCommand, "@Information", DbType.String, information);
             _database.DefineParameter(updateCommand, "@DistanceInKm", DbType.Double, distanceInKm);
             return FindById(_database.ExecuteScalar(updateCommand));
+        }
+
+        public bool DeleteTour(int tourId)
+        {
+            DbCommand deleteCommand = _database.CreateCommand(SQL_DELETE_TOUR);
+            _database.DefineParameter(deleteCommand, "@Id", DbType.Int32, tourId);
+            return _database.ExecuteScalar(deleteCommand) == tourId;
         }
 
 

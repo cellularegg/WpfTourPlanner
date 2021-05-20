@@ -23,13 +23,16 @@ namespace WpfTourPlanner.ViewModels
 
         public ICommand SearchCommand { get; }
 
-        public ICommand ClearCommand { get; }
+        public ICommand ClearSearchCommand { get; }
 
         public ICommand UpdateTourCommand { get; }
 
         public ICommand DuplicateTourCommand { get; }
 
         public ICommand DuplicateTourLogCommand { get; }
+
+        public ICommand DeleteTourCommand { get; }
+        public ICommand DeleteTourLogCommand { get; }
 
         // TODO add other commands
         public ObservableCollection<Tour> Tours { get; private set; }
@@ -81,7 +84,7 @@ namespace WpfTourPlanner.ViewModels
             get => _currentLog;
             set
             {
-                if ((_currentLog != value) && (value != null))
+                if ((_currentLog != value))
                 {
                     _currentLog = value;
                     RaisePropertyChangedEvent(nameof(CurrentLog));
@@ -159,10 +162,13 @@ namespace WpfTourPlanner.ViewModels
         {
             _tourPlannerManager = tourPlannerManager;
             Tours = new ObservableCollection<Tour>();
+            _searchQuery = string.Empty;
 
             this.SearchCommand = new RelayCommand(o =>
             {
                 IEnumerable<Tour> tours = _tourPlannerManager.Search(_searchQuery);
+                CurrentTour = null;
+                CurrentLog = null;
                 Tours.Clear();
                 foreach (Tour tour in tours)
                 {
@@ -170,12 +176,10 @@ namespace WpfTourPlanner.ViewModels
                 }
             });
 
-            this.ClearCommand = new RelayCommand(o =>
+            this.ClearSearchCommand = new RelayCommand(o =>
             {
-                Tours.Clear();
-                SearchQuery = string.Empty;
-                FillTourList();
-            });
+                ResetView();
+            }, new Predicate<object>(CanExecuteClearSearch));
 
             this.DuplicateTourCommand = new RelayCommand(o =>
             {
@@ -222,9 +226,7 @@ namespace WpfTourPlanner.ViewModels
                     }
                     else
                     {
-                        Tours.Clear();
-                        FillTourList();
-                        CurrentTour = null;
+                        ResetView();
                     }
                 }
                 catch (OverflowException ex)
@@ -247,7 +249,51 @@ namespace WpfTourPlanner.ViewModels
                 }
             }, new Predicate<object>(CanExecuteUpdateTour));
 
+            this.DeleteTourCommand = new RelayCommand(o =>
+            {
+                Debug.WriteLine("Delete tour!");
+                int currentTourId = CurrentTour.Id;
+                if (_tourPlannerManager.DeleteTour(currentTourId))
+                {
+                    ResetView();
+                }
+                else
+                {
+                    MessageBox.Show($"Error Tour with Id: {currentTourId} could not be deleted!",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+                }
+            }, new Predicate<object>(CanExecuteDeleteTour));
+
+            DeleteTourLogCommand = new RelayCommand(o =>
+            {
+                if (_tourPlannerManager.DeleteTourLog(CurrentLog.Id))
+                {
+                    CurrentTour.Logs.Remove(CurrentLog);
+                    CurrentLog = null;
+                }
+                else
+                {
+                    MessageBox.Show($"Error TourLog with Id: {CurrentLog?.Id} could not be deleted!",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+                }
+            }, new Predicate<object>(CanExecuteDeleteTourLog));
+
             FillTourList();
+        }
+
+        private bool CanExecuteDeleteTourLog(object obj)
+        {
+            return CurrentLog != null && CurrentLog != null;
+        }
+
+        private bool CanExecuteClearSearch(object obj)
+        {
+            return !String.IsNullOrWhiteSpace(_searchQuery);
+        }
+
+        private bool CanExecuteDeleteTour(object obj)
+        {
+            return CurrentTour != null;
         }
 
         private bool CanExecuteDuplicateTourLog(object obj)
@@ -257,10 +303,19 @@ namespace WpfTourPlanner.ViewModels
 
         private void FillTourList()
         {
+            Tours.Clear();
             foreach (Tour tour in _tourPlannerManager.GetTours())
             {
                 Tours.Add(tour);
             }
+        }
+
+        private void ResetView()
+        {
+            FillTourList();
+            SearchQuery = String.Empty;
+            CurrentTour = null;
+            CurrentLog = null;
         }
 
         private bool CanExecuteDuplicateTour(object param)

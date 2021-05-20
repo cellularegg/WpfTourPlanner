@@ -53,5 +53,17 @@ namespace WpfTourPlanner.BusinessLayer
             ITourDao tourDao = DalFactory.CreateTourDao();
             return tourDao.UpdateTour(tourId, name, description, information, distanceInKm);
         }
+
+        public bool DeleteTour(int tourId)
+        {
+            ITourDao tourDao = DalFactory.CreateTourDao();
+            return tourDao.DeleteTour(tourId);
+        }
+
+        public bool DeleteTourLog(int tourLogId)
+        {
+            ITourLogDao tourLogDao = DalFactory.CreateTourLogDao();
+            return tourLogDao.DeleteTourLog(tourLogId);
+        }
     }
 }

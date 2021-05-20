@@ -16,5 +16,9 @@ namespace WpfTourPlanner.BusinessLayer
             double heartRate, double averageSpeedInKmH, double temperatureInC, int breaks, int steps, Tour logTour);
 
         Tour UpdateTour(int tourId, string name, string description, string information, double distanceInKm);
+
+        bool DeleteTour(int tourId);
+
+        bool DeleteTourLog(int tourLogId);
     }
 }

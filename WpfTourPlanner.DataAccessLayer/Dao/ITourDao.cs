@@ -10,5 +10,6 @@ namespace WpfTourPlanner.DataAccessLayer.Dao
         Tour AddNewItem(string name, string description, string information, double distanceInKm);
         IEnumerable<Tour> GetTours();
         // TODO update and delete
+        bool DeleteTour(int tourId);
     }
 }

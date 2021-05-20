@@ -78,14 +78,14 @@
 
         <Label Grid.Row="2" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Name:</Label>
         <TextBox Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
-                 Text="{Binding TourName}" />
+                 Text="{Binding TourName, UpdateSourceTrigger=PropertyChanged}" />
         <Button Grid.Row="2" Grid.Column="11" Margin="5,5,5,5" Command="{Binding UpdateTourCommand}">Update</Button>
-        <Label Grid.Row="4" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Distance In Km:</Label>
+        <Label Grid.Row="3" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Desciption:</Label>
         <TextBox Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
-                 TextWrapping="Wrap" AcceptsReturn="True" MinHeight="60" Text="{Binding TourDescription}" />
+                 TextWrapping="Wrap" AcceptsReturn="True" MinHeight="60" Text="{Binding TourDescription, UpdateSourceTrigger=PropertyChanged}" />
+        <Label Grid.Row="4" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Distance In Km:</Label>
         <TextBox Grid.Row="4" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
                  Text="{Binding TourDistance, UpdateSourceTrigger=PropertyChanged}" />
-        <Label Grid.Row="3" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Desciption:</Label>
         <userControls:ImageUserControl Grid.Row="5" Grid.Column="5" Grid.ColumnSpan="7" Margin="5,5,5,5" />
         <GridSplitter Grid.Row="6" Grid.Column="5" Grid.ColumnSpan="7" HorizontalAlignment="Stretch" Height="5"
                       ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" VerticalAlignment="Top"

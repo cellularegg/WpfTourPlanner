@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using WpfTourPlanner.BusinessLayer;
 using WpfTourPlanner.Models;
@@ -15,6 +17,9 @@ namespace WpfTourPlanner.ViewModels
         private Tour _currentTour;
         private string _searchQuery;
         private TourLog _currentLog;
+        private string _tourDistance;
+        private string _tourName;
+        private string _tourDescription;
 
         public ICommand SearchCommand { get; }
 
@@ -51,13 +56,22 @@ namespace WpfTourPlanner.ViewModels
             }
             set
             {
-                if ((_currentTour != value) && (value != null))
+                if ((_currentTour != value))
                 {
                     _currentTour = value;
                     RaisePropertyChangedEvent(nameof(CurrentTour));
-                    RaisePropertyChangedEvent(nameof(TourName));
-                    RaisePropertyChangedEvent(nameof(TourDescription));
-                    RaisePropertyChangedEvent(nameof(TourDistance));
+                    if (value == null)
+                    {
+                        TourName = string.Empty;
+                        TourDescription = string.Empty;
+                        TourDistance = string.Empty;
+                    }
+                    else
+                    {
+                        TourName = _currentTour.Name;
+                        TourDescription = _currentTour.Description;
+                        TourDistance = _currentTour.DistanceInKm.ToString();
+                    }
                 }
             }
         }
@@ -82,16 +96,16 @@ namespace WpfTourPlanner.ViewModels
                 if (CurrentTour != null)
                 {
                     Debug.WriteLine($"Current Tour Name: {CurrentTour.Name}");
-                    return CurrentTour.Name;
+                    return _tourName;
                 }
 
                 return string.Empty;
             }
             set
             {
-                if (!String.IsNullOrWhiteSpace(value) && value != CurrentTour.Name)
+                if (value != null && value != _tourName)
                 {
-                    CurrentTour.Name = value;
+                    _tourName = value;
                     RaisePropertyChangedEvent(nameof(TourName));
                 }
             }
@@ -104,16 +118,16 @@ namespace WpfTourPlanner.ViewModels
             {
                 if (CurrentTour != null)
                 {
-                    return CurrentTour.Description;
+                    return _tourDescription;
                 }
 
                 return string.Empty;
             }
             set
             {
-                if (!String.IsNullOrWhiteSpace(value) && value != CurrentTour.Description)
+                if (value != null && value != _tourDescription)
                 {
-                    CurrentTour.Description = value;
+                    _tourDescription = value;
                     RaisePropertyChangedEvent(nameof(TourDescription));
                 }
             }
@@ -125,19 +139,19 @@ namespace WpfTourPlanner.ViewModels
             {
                 if (CurrentTour != null)
                 {
-                    return CurrentTour.DistanceInKm.ToString();
+                    return _tourDistance;
                 }
 
                 return string.Empty;
             }
             set
             {
-                if (!String.IsNullOrWhiteSpace(value) && CurrentTour.DistanceInKm.ToString() != value &&
-                    int.TryParse(value, out int val))
+                if (value != null && _tourDistance != value)
                 {
-                    CurrentTour.DistanceInKm = val;
-                    RaisePropertyChangedEvent(nameof(TourDistance));
+                    _tourDistance = value;
                 }
+
+                RaisePropertyChangedEvent(nameof(TourDistance));
             }
         }
 
@@ -167,14 +181,16 @@ namespace WpfTourPlanner.ViewModels
             {
                 if (_currentTour != null)
                 {
-                    Tour newlyCreatedTour = _tourPlannerManager.CreateTour(CurrentTour.Name + " Copy", CurrentTour.Description,
+                    Tour newlyCreatedTour = _tourPlannerManager.CreateTour(CurrentTour.Name + " Copy",
+                        CurrentTour.Description,
                         CurrentTour.Information, CurrentTour.DistanceInKm);
                     Tours.Add(newlyCreatedTour);
                     TourLog newlyCreatedLog;
                     foreach (TourLog log in CurrentTour.Logs)
                     {
-                        newlyCreatedLog = _tourPlannerManager.CreateTourLog(log.Report + " Copy", log.LogDateTime, log.TotalTimeInH, 
-                            log.Rating, log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps, 
+                        newlyCreatedLog = _tourPlannerManager.CreateTourLog(log.Report + " Copy", log.LogDateTime,
+                            log.TotalTimeInH,
+                            log.Rating, log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps,
                             newlyCreatedTour);
                         newlyCreatedTour.Logs.Add(newlyCreatedLog);
                     }
@@ -192,8 +208,43 @@ namespace WpfTourPlanner.ViewModels
 
             this.UpdateTourCommand = new RelayCommand(o =>
             {
-                // TODO Actually update!!!
-                Debug.WriteLine("Update Tour");
+                try
+                {
+                    double distance = Double.Parse(TourDistance);
+                    Tour updatedTour = _tourPlannerManager.UpdateTour(CurrentTour.Id, TourName, TourDescription,
+                        CurrentTour.Information, distance);
+                    Debug.WriteLine($"Updated Tour: {updatedTour}");
+                    if (updatedTour == null)
+                    {
+                        MessageBox.Show("Error Tour Could not be updated", "Error", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        // TODO custom exception??
+                    }
+                    else
+                    {
+                        Tours.Clear();
+                        FillTourList();
+                        CurrentTour = null;
+                    }
+                }
+                catch (OverflowException ex)
+                {
+                    MessageBox.Show($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Debug.WriteLine(ex);
+                }
+                catch (FormatException ex)
+                {
+                    MessageBox.Show($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Debug.WriteLine(ex);
+                }
+                catch (ArgumentNullException ex)
+                {
+                    MessageBox.Show($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Debug.WriteLine(ex);
+                }
             }, new Predicate<object>(CanExecuteUpdateTour));
 
             FillTourList();
@@ -219,8 +270,10 @@ namespace WpfTourPlanner.ViewModels
 
         private bool CanExecuteUpdateTour(object param)
         {
-            return !String.IsNullOrWhiteSpace(CurrentTour?.Name) &&
-                   !String.IsNullOrWhiteSpace(CurrentTour?.Description) && CurrentTour?.DistanceInKm > 0;
+            return CurrentTour != null && _tourDescription != null && _tourName != null &&
+                   !String.IsNullOrWhiteSpace(_tourName) && !String.IsNullOrWhiteSpace(_tourDescription) &&
+                   !String.IsNullOrWhiteSpace(_tourDistance) && Double.TryParse(_tourDistance, out double val) &&
+                   val > 0;
         }
     }
 }

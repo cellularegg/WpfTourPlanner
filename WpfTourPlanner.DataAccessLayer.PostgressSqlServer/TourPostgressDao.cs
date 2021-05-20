@@ -12,10 +12,12 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
     public class TourPostgressDao : ITourDao
     {
         private const string SQL_FIND_BY_ID = "SELECT * FROM public.\"Tour\" WHERE \"Id\"=@Id;";
-        private const string SQL_GET_ALL_ITEMS = "SELECT * FROM public.\"Tour\";";
+        private const string SQL_GET_ALL_ITEMS = "SELECT * FROM public.\"Tour\" ORDER BY \"Id\";";
 
         private const string SQL_INSERT_NEW_TOUR =
-            "INSERT INTO \"Tour\" (\"Name\", \"Description\", \"Information\", \"DistanceInKm\") VALUES (@Name, @Description, @Information, @DistanceInKm) RETURNING \"Id\";";
+            "INSERT INTO public.\"Tour\" (\"Name\", \"Description\", \"Information\", \"DistanceInKm\") VALUES (@Name, @Description, @Information, @DistanceInKm) RETURNING \"Id\";";
+
+        private const string SQL_UPDATE_TOUR = "UPDATE public.\"Tour\" SET \"Name\"=@Name, \"Description\"=@Description, \"Information\"=@Information, \"DistanceInKm\"=@DistanceInKm WHERE \"Id\"=@Id RETURNING \"Id\";";
 
         private IDatabase _database;
 
@@ -41,6 +43,17 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             _database.DefineParameter(insertCommand, "@Information", DbType.String, information);
             _database.DefineParameter(insertCommand, "@DistanceInKm", DbType.Double, distanceInKm);
             return FindById(_database.ExecuteScalar(insertCommand));
+        }
+
+        public Tour UpdateTour(int tourId, string name, string description, string information, double distanceInKm)
+        {
+            DbCommand updateCommand = _database.CreateCommand(SQL_UPDATE_TOUR);
+            _database.DefineParameter(updateCommand, "@Id", DbType.Int32, tourId);
+            _database.DefineParameter(updateCommand, "@Name", DbType.String, name);
+            _database.DefineParameter(updateCommand, "@Description", DbType.String, description);
+            _database.DefineParameter(updateCommand, "@Information", DbType.String, information);
+            _database.DefineParameter(updateCommand, "@DistanceInKm", DbType.Double, distanceInKm);
+            return FindById(_database.ExecuteScalar(updateCommand));
         }
 
 

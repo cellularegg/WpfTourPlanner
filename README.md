@@ -15,6 +15,7 @@ Time Tracking:
 | 19-may-21 | 3         | custom UI component                           |
 | 19-may-21 | 4         | Added bindings for text fields in UI          |
 | 19-may-21 | 3         | Added copy feature for tours and logs         |
+| 20-may-21 | 2         | Added update tour feature                     |
 
 
 ## Todo

@@ -15,7 +15,7 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
     public class TourLogPostgressDao : ITourLogDao
     {
         private const string SQL_FIND_BY_ID = "SELECT * FROM public.\"TourLog\" WHERE \"Id\"=@Id;";
-        private const string SQL_FIND_BY_TOUR = "SELECT * FROM public.\"TourLog\" WHERE \"TourId\"=@TourId;";
+        private const string SQL_FIND_BY_TOUR = "SELECT * FROM public.\"TourLog\" WHERE \"TourId\"=@TourId ORDER BY \"Id\";";
 
         private const string SQL_INSERT_NEW_TOURLOG = "INSERT INTO public.\"TourLog\" (\"Report\", \"LogDateTime\", " +
                                                       "\"TotalTimeInH\", \"Rating\", \"HeartRate\", " +

@@ -16,7 +16,7 @@ namespace WpfTourPlanner.BusinessLayer
         {
             ITourDao tourDao = DalFactory.CreateTourDao();
             // ToDo check if this is ok
-            IEnumerable<Tour> tours =  tourDao.GetTours();
+            IEnumerable<Tour> tours = tourDao.GetTours();
             foreach (Tour tour in tours.ToArray())
             {
                 tour.Logs = new ObservableCollection<TourLog>(tour.Logs as List<TourLog> ?? new List<TourLog>());
@@ -46,6 +46,12 @@ namespace WpfTourPlanner.BusinessLayer
             ITourLogDao tourLogDao = DalFactory.CreateTourLogDao();
             return tourLogDao.AddNewTourLog(report, logDateTime, totalTimeInH, rating, heartRate, averageSpeedInKmH,
                 temperatureInC, breaks, steps, logTour.Id);
+        }
+
+        public Tour UpdateTour(int tourId, string name, string description, string information, double distanceInKm)
+        {
+            ITourDao tourDao = DalFactory.CreateTourDao();
+            return tourDao.UpdateTour(tourId, name, description, information, distanceInKm);
         }
     }
 }

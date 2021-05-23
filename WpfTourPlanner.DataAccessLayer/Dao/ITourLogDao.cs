@@ -14,5 +14,6 @@ namespace WpfTourPlanner.DataAccessLayer.Dao
         IList<TourLog> GetLogsForTour(Tour tour);
         IList<TourLog> GetLogsByTourId(int tourId);
         // TODO update and delete!
+        bool DeleteTourLog(int tourLogId);
     }
 }

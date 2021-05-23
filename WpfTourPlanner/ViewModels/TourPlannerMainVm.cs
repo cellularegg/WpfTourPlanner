@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
+using Ookii.Dialogs.Wpf;
 using WpfTourPlanner.BusinessLayer;
 using WpfTourPlanner.Models;
+using WpfTourPlanner.Models.Exceptions;
 
 namespace WpfTourPlanner.ViewModels
 {
@@ -15,16 +20,25 @@ namespace WpfTourPlanner.ViewModels
         private Tour _currentTour;
         private string _searchQuery;
         private TourLog _currentLog;
+        private string _tourDistance;
+        private string _tourName;
+        private string _tourDescription;
 
         public ICommand SearchCommand { get; }
 
-        public ICommand ClearCommand { get; }
+        public ICommand ClearSearchCommand { get; }
 
         public ICommand UpdateTourCommand { get; }
 
         public ICommand DuplicateTourCommand { get; }
 
         public ICommand DuplicateTourLogCommand { get; }
+
+        public ICommand DeleteTourCommand { get; }
+        public ICommand DeleteTourLogCommand { get; }
+
+        public ICommand ExportCommand { get; }
+        public ICommand ImportCommand { get; }
 
         // TODO add other commands
         public ObservableCollection<Tour> Tours { get; private set; }
@@ -51,13 +65,22 @@ namespace WpfTourPlanner.ViewModels
             }
             set
             {
-                if ((_currentTour != value) && (value != null))
+                if ((_currentTour != value))
                 {
                     _currentTour = value;
                     RaisePropertyChangedEvent(nameof(CurrentTour));
-                    RaisePropertyChangedEvent(nameof(TourName));
-                    RaisePropertyChangedEvent(nameof(TourDescription));
-                    RaisePropertyChangedEvent(nameof(TourDistance));
+                    if (value == null)
+                    {
+                        TourName = string.Empty;
+                        TourDescription = string.Empty;
+                        TourDistance = string.Empty;
+                    }
+                    else
+                    {
+                        TourName = _currentTour.Name;
+                        TourDescription = _currentTour.Description;
+                        TourDistance = _currentTour.DistanceInKm.ToString();
+                    }
                 }
             }
         }
@@ -67,7 +90,7 @@ namespace WpfTourPlanner.ViewModels
             get => _currentLog;
             set
             {
-                if ((_currentLog != value) && (value != null))
+                if ((_currentLog != value))
                 {
                     _currentLog = value;
                     RaisePropertyChangedEvent(nameof(CurrentLog));
@@ -82,16 +105,16 @@ namespace WpfTourPlanner.ViewModels
                 if (CurrentTour != null)
                 {
                     Debug.WriteLine($"Current Tour Name: {CurrentTour.Name}");
-                    return CurrentTour.Name;
+                    return _tourName;
                 }
 
                 return string.Empty;
             }
             set
             {
-                if (!String.IsNullOrWhiteSpace(value) && value != CurrentTour.Name)
+                if (value != null && value != _tourName)
                 {
-                    CurrentTour.Name = value;
+                    _tourName = value;
                     RaisePropertyChangedEvent(nameof(TourName));
                 }
             }
@@ -104,16 +127,16 @@ namespace WpfTourPlanner.ViewModels
             {
                 if (CurrentTour != null)
                 {
-                    return CurrentTour.Description;
+                    return _tourDescription;
                 }
 
                 return string.Empty;
             }
             set
             {
-                if (!String.IsNullOrWhiteSpace(value) && value != CurrentTour.Description)
+                if (value != null && value != _tourDescription)
                 {
-                    CurrentTour.Description = value;
+                    _tourDescription = value;
                     RaisePropertyChangedEvent(nameof(TourDescription));
                 }
             }
@@ -125,19 +148,19 @@ namespace WpfTourPlanner.ViewModels
             {
                 if (CurrentTour != null)
                 {
-                    return CurrentTour.DistanceInKm.ToString();
+                    return _tourDistance;
                 }
 
                 return string.Empty;
             }
             set
             {
-                if (!String.IsNullOrWhiteSpace(value) && CurrentTour.DistanceInKm.ToString() != value &&
-                    int.TryParse(value, out int val))
+                if (value != null && _tourDistance != value)
                 {
-                    CurrentTour.DistanceInKm = val;
-                    RaisePropertyChangedEvent(nameof(TourDistance));
+                    _tourDistance = value;
                 }
+
+                RaisePropertyChangedEvent(nameof(TourDistance));
             }
         }
 
@@ -145,10 +168,13 @@ namespace WpfTourPlanner.ViewModels
         {
             _tourPlannerManager = tourPlannerManager;
             Tours = new ObservableCollection<Tour>();
+            _searchQuery = string.Empty;
 
             this.SearchCommand = new RelayCommand(o =>
             {
                 IEnumerable<Tour> tours = _tourPlannerManager.Search(_searchQuery);
+                CurrentTour = null;
+                CurrentLog = null;
                 Tours.Clear();
                 foreach (Tour tour in tours)
                 {
@@ -156,25 +182,23 @@ namespace WpfTourPlanner.ViewModels
                 }
             });
 
-            this.ClearCommand = new RelayCommand(o =>
-            {
-                Tours.Clear();
-                SearchQuery = string.Empty;
-                FillTourList();
-            });
+            this.ClearSearchCommand =
+                new RelayCommand(o => { ResetView(); }, new Predicate<object>(CanExecuteClearSearch));
 
             this.DuplicateTourCommand = new RelayCommand(o =>
             {
                 if (_currentTour != null)
                 {
-                    Tour newlyCreatedTour = _tourPlannerManager.CreateTour(CurrentTour.Name + " Copy", CurrentTour.Description,
+                    Tour newlyCreatedTour = _tourPlannerManager.CreateTour(CurrentTour.Name + " Copy",
+                        CurrentTour.Description,
                         CurrentTour.Information, CurrentTour.DistanceInKm);
                     Tours.Add(newlyCreatedTour);
                     TourLog newlyCreatedLog;
                     foreach (TourLog log in CurrentTour.Logs)
                     {
-                        newlyCreatedLog = _tourPlannerManager.CreateTourLog(log.Report + " Copy", log.LogDateTime, log.TotalTimeInH, 
-                            log.Rating, log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps, 
+                        newlyCreatedLog = _tourPlannerManager.CreateTourLog(log.Report + " Copy", log.LogDateTime,
+                            log.TotalTimeInH,
+                            log.Rating, log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps,
                             newlyCreatedTour);
                         newlyCreatedTour.Logs.Add(newlyCreatedLog);
                     }
@@ -192,11 +216,143 @@ namespace WpfTourPlanner.ViewModels
 
             this.UpdateTourCommand = new RelayCommand(o =>
             {
-                // TODO Actually update!!!
-                Debug.WriteLine("Update Tour");
+                try
+                {
+                    double distance = Double.Parse(TourDistance);
+                    Tour updatedTour = _tourPlannerManager.UpdateTour(CurrentTour.Id, TourName, TourDescription,
+                        CurrentTour.Information, distance);
+                    Debug.WriteLine($"Updated Tour: {updatedTour}");
+                    if (updatedTour == null)
+                    {
+                        MessageBox.Show("Error Tour Could not be updated", "Error", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        // TODO custom exception??
+                    }
+                    else
+                    {
+                        ResetView();
+                    }
+                }
+                catch (OverflowException ex)
+                {
+                    MessageBox.Show($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Debug.WriteLine(ex);
+                }
+                catch (FormatException ex)
+                {
+                    MessageBox.Show($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Debug.WriteLine(ex);
+                }
+                catch (ArgumentNullException ex)
+                {
+                    MessageBox.Show($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Debug.WriteLine(ex);
+                }
             }, new Predicate<object>(CanExecuteUpdateTour));
 
+            this.DeleteTourCommand = new RelayCommand(o =>
+            {
+                Debug.WriteLine("Delete tour!");
+                int currentTourId = CurrentTour.Id;
+                if (_tourPlannerManager.DeleteTour(currentTourId))
+                {
+                    ResetView();
+                }
+                else
+                {
+                    MessageBox.Show($"Error Tour with Id: {currentTourId} could not be deleted!",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }, new Predicate<object>(CanExecuteDeleteTour));
+
+            this.DeleteTourLogCommand = new RelayCommand(o =>
+            {
+                if (_tourPlannerManager.DeleteTourLog(CurrentLog.Id))
+                {
+                    CurrentTour.Logs.Remove(CurrentLog);
+                    CurrentLog = null;
+                }
+                else
+                {
+                    MessageBox.Show($"Error TourLog with Id: {CurrentLog?.Id} could not be deleted!",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }, new Predicate<object>(CanExecuteDeleteTourLog));
+
+            this.ExportCommand = new RelayCommand(o =>
+            {
+                Debug.WriteLine("Exporting");
+                VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+                // dialog.Description = "Please select a folder.";
+                // dialog.UseDescriptionForTitle = true;
+                if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
+                {
+                    MessageBox.Show(
+                        "Because you are not using Windows Vista or later, the regular folder browser dialog will be used. Please use Windows Vista to see the new dialog.",
+                        "Sample folder browser dialog", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                bool? dialogResult = dialog.ShowDialog();
+                if (dialogResult != null && (bool) dialogResult)
+                {
+                    _tourPlannerManager.Export(dialog.SelectedPath);
+                    MessageBox.Show("The selected folder was: " + dialog.SelectedPath, "Sample folder browser dialog");
+                }
+            });
+
+            this.ImportCommand = new RelayCommand(o =>
+            {
+                Debug.WriteLine("Importing...");
+                VistaOpenFileDialog fileDialog = new VistaOpenFileDialog();
+                fileDialog.Multiselect = false;
+                fileDialog.CheckFileExists = true;
+                fileDialog.Filter = "Json files (*.json)|*.json";
+                if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
+                {
+                    MessageBox.Show(
+                        "Because you are not using Windows Vista or later, the regular folder browser dialog will be used. Please use Windows Vista to see the new dialog.",
+                        "Sample folder browser dialog", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                bool? dialogResult = fileDialog.ShowDialog();
+                if (dialogResult != null && (bool) dialogResult)
+                {
+                    try
+                    {
+                        _tourPlannerManager.Import(fileDialog.FileName);
+                        this.ResetView();
+                    }
+                    catch (InvalidImportFileException e)
+                    {
+                        Debug.WriteLine(e);
+                        MessageBox.Show(
+                            e.Message,
+                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    // MessageBox.Show("The selected file was: " + fileDialog.FileName, "Sample folder browser dialog");
+                }
+            });
+
             FillTourList();
+        }
+
+        private bool CanExecuteDeleteTourLog(object obj)
+        {
+            return CurrentLog != null && CurrentLog != null;
+        }
+
+        private bool CanExecuteClearSearch(object obj)
+        {
+            return !String.IsNullOrWhiteSpace(_searchQuery);
+        }
+
+        private bool CanExecuteDeleteTour(object obj)
+        {
+            return CurrentTour != null;
         }
 
         private bool CanExecuteDuplicateTourLog(object obj)
@@ -206,10 +362,19 @@ namespace WpfTourPlanner.ViewModels
 
         private void FillTourList()
         {
+            Tours.Clear();
             foreach (Tour tour in _tourPlannerManager.GetTours())
             {
                 Tours.Add(tour);
             }
+        }
+
+        private void ResetView()
+        {
+            FillTourList();
+            SearchQuery = String.Empty;
+            CurrentTour = null;
+            CurrentLog = null;
         }
 
         private bool CanExecuteDuplicateTour(object param)
@@ -219,8 +384,10 @@ namespace WpfTourPlanner.ViewModels
 
         private bool CanExecuteUpdateTour(object param)
         {
-            return !String.IsNullOrWhiteSpace(CurrentTour?.Name) &&
-                   !String.IsNullOrWhiteSpace(CurrentTour?.Description) && CurrentTour?.DistanceInKm > 0;
+            return CurrentTour != null && _tourDescription != null && _tourName != null &&
+                   !String.IsNullOrWhiteSpace(_tourName) && !String.IsNullOrWhiteSpace(_tourDescription) &&
+                   !String.IsNullOrWhiteSpace(_tourDistance) && Double.TryParse(_tourDistance, out double val) &&
+                   val > 0;
         }
     }
 }

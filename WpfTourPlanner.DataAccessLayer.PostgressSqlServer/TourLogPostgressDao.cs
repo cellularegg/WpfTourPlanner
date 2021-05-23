@@ -15,7 +15,9 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
     public class TourLogPostgressDao : ITourLogDao
     {
         private const string SQL_FIND_BY_ID = "SELECT * FROM public.\"TourLog\" WHERE \"Id\"=@Id;";
-        private const string SQL_FIND_BY_TOUR = "SELECT * FROM public.\"TourLog\" WHERE \"TourId\"=@TourId;";
+
+        private const string SQL_FIND_BY_TOUR =
+            "SELECT * FROM public.\"TourLog\" WHERE \"TourId\"=@TourId ORDER BY \"Id\";";
 
         private const string SQL_INSERT_NEW_TOURLOG = "INSERT INTO public.\"TourLog\" (\"Report\", \"LogDateTime\", " +
                                                       "\"TotalTimeInH\", \"Rating\", \"HeartRate\", " +
@@ -23,6 +25,8 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
                                                       "\"Steps\", \"TourId\") VALUES (@Report, @LogDateTime, " +
                                                       "@TotalTimeInH, @Rating, @HeartRate, @AverageSpeedInKmH," +
                                                       " @TemperatureInC, @Breaks, @Steps, @TourId) RETURNING \"Id\";";
+
+        private const string SQL_DELETE_TOUR_LOG = "DELETE FROM public.\"TourLog\" WHERE \"Id\"=@Id RETURNING \"Id\";";
 
         private IDatabase _database;
 
@@ -52,6 +56,14 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             _database.DefineParameter(insertCommand, "@TourId", DbType.Int32, tourId);
             return FindById(_database.ExecuteScalar(insertCommand));
         }
+
+        public bool DeleteTourLog(int tourLogId)
+        {
+            DbCommand deleteCommand = _database.CreateCommand(SQL_DELETE_TOUR_LOG);
+            _database.DefineParameter(deleteCommand, "@Id", DbType.Int32, tourLogId);
+            return _database.ExecuteScalar(deleteCommand) == tourLogId;
+        }
+
 
         public TourLog FindById(int logId)
         {

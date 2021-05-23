@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Documents;
 using Newtonsoft.Json;
@@ -28,11 +29,21 @@ namespace WpfTourPlanner.Models
             IList<TourLog> logs)
         {
             Id = id;
-            Name = name;
-            Description = description;
-            Information = information;
+            Name = DefaultStringValue(name, nameof(Name));
+            Description = DefaultStringValue(description,nameof(Description));
+            Information = DefaultStringValue(information, nameof(Information));
             DistanceInKm = distanceInKm;
             Logs = logs;
+        }
+
+        private string DefaultStringValue(string value, string fallback)
+        {
+            if (String.IsNullOrWhiteSpace(value))
+            {
+                return fallback;
+            }
+
+            return value;
         }
 
         public override string ToString()

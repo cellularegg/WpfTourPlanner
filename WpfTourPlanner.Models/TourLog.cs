@@ -63,7 +63,7 @@ namespace WpfTourPlanner.Models
             double averageSpeedInKmH, double temperatureInC, int breaks, int steps, int rating, int tourId)
         {
             Id = id;
-            Report = report;
+            Report = DefaultStringValue(report, nameof(Report));
             LogDateTime = logDateTime;
             TotalTimeInH = totalTimeInH;
             HeartRate = heartRate;
@@ -73,6 +73,16 @@ namespace WpfTourPlanner.Models
             Steps = steps;
             Rating = rating;
             TourId = tourId;
+        }
+        
+        private string DefaultStringValue(string value, string fallback)
+        {
+            if (String.IsNullOrWhiteSpace(value))
+            {
+                return fallback;
+            }
+
+            return value;
         }
 
         public override string ToString()

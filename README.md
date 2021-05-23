@@ -16,6 +16,7 @@ Time Tracking:
 | 19-may-21 | 4         | Added bindings for text fields in UI           |
 | 19-may-21 | 3         | Added copy feature for tours and logs          |
 | 20-may-21 | 3         | Added update tour and delete tour(log) feature |
+| 23-may-21 | 1.5         | Added import and export feature |
 
 
 ## Todo
@@ -27,5 +28,6 @@ Time Tracking:
 * error handling
 * Navigation
 * pdf report generation
+* Custom Exceptions
 * ~~custom ui component~~ -> done image + caption
 * ~~config file~~ -> using App.confing

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Schema.Generation;
 using NUnit.Framework;
 using WpfTourPlanner.Models;
 
@@ -28,6 +32,21 @@ namespace WpfTourPlanner.Test
             Assert.AreEqual(0, tl.Rating);
             tl.Rating = TourLog.RATING_MIN - 1;
             Assert.AreEqual(TourLog.RATING_MIN, tl.Rating);
+        }
+
+        [Test]
+        public void TestJsonSchema()
+        {
+            JSchemaGenerator generator = new JSchemaGenerator();
+
+            JSchema schema = generator.Generate(typeof(Tour));
+            string str = schema.ToString();
+            string text = File.ReadAllText(@"C:\Users\zeleodav\MegaSync\fh_subjects\swe2\FilenameFromConfig.json");
+            
+            JArray tours = JArray.Parse(text);
+            
+            bool isValid = tours.IsValid(schema);
+            Assert.IsTrue(isValid);
         }
     }
 }

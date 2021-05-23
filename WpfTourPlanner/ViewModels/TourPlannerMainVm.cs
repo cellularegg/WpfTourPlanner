@@ -6,8 +6,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
+using Ookii.Dialogs.Wpf;
 using WpfTourPlanner.BusinessLayer;
 using WpfTourPlanner.Models;
+using WpfTourPlanner.Models.Exceptions;
 
 namespace WpfTourPlanner.ViewModels
 {
@@ -33,6 +36,9 @@ namespace WpfTourPlanner.ViewModels
 
         public ICommand DeleteTourCommand { get; }
         public ICommand DeleteTourLogCommand { get; }
+
+        public ICommand ExportCommand { get; }
+        public ICommand ImportCommand { get; }
 
         // TODO add other commands
         public ObservableCollection<Tour> Tours { get; private set; }
@@ -176,10 +182,8 @@ namespace WpfTourPlanner.ViewModels
                 }
             });
 
-            this.ClearSearchCommand = new RelayCommand(o =>
-            {
-                ResetView();
-            }, new Predicate<object>(CanExecuteClearSearch));
+            this.ClearSearchCommand =
+                new RelayCommand(o => { ResetView(); }, new Predicate<object>(CanExecuteClearSearch));
 
             this.DuplicateTourCommand = new RelayCommand(o =>
             {
@@ -260,11 +264,11 @@ namespace WpfTourPlanner.ViewModels
                 else
                 {
                     MessageBox.Show($"Error Tour with Id: {currentTourId} could not be deleted!",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }, new Predicate<object>(CanExecuteDeleteTour));
 
-            DeleteTourLogCommand = new RelayCommand(o =>
+            this.DeleteTourLogCommand = new RelayCommand(o =>
             {
                 if (_tourPlannerManager.DeleteTourLog(CurrentLog.Id))
                 {
@@ -274,9 +278,64 @@ namespace WpfTourPlanner.ViewModels
                 else
                 {
                     MessageBox.Show($"Error TourLog with Id: {CurrentLog?.Id} could not be deleted!",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }, new Predicate<object>(CanExecuteDeleteTourLog));
+
+            this.ExportCommand = new RelayCommand(o =>
+            {
+                Debug.WriteLine("Exporting");
+                VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+                // dialog.Description = "Please select a folder.";
+                // dialog.UseDescriptionForTitle = true;
+                if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
+                {
+                    MessageBox.Show(
+                        "Because you are not using Windows Vista or later, the regular folder browser dialog will be used. Please use Windows Vista to see the new dialog.",
+                        "Sample folder browser dialog", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                bool? dialogResult = dialog.ShowDialog();
+                if (dialogResult != null && (bool) dialogResult)
+                {
+                    _tourPlannerManager.Export(dialog.SelectedPath);
+                    MessageBox.Show("The selected folder was: " + dialog.SelectedPath, "Sample folder browser dialog");
+                }
+            });
+
+            this.ImportCommand = new RelayCommand(o =>
+            {
+                Debug.WriteLine("Importing...");
+                VistaOpenFileDialog fileDialog = new VistaOpenFileDialog();
+                fileDialog.Multiselect = false;
+                fileDialog.CheckFileExists = true;
+                fileDialog.Filter = "Json files (*.json)|*.json";
+                if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
+                {
+                    MessageBox.Show(
+                        "Because you are not using Windows Vista or later, the regular folder browser dialog will be used. Please use Windows Vista to see the new dialog.",
+                        "Sample folder browser dialog", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                bool? dialogResult = fileDialog.ShowDialog();
+                if (dialogResult != null && (bool) dialogResult)
+                {
+                    try
+                    {
+                        _tourPlannerManager.Import(fileDialog.FileName);
+                        this.ResetView();
+                    }
+                    catch (InvalidImportFileException e)
+                    {
+                        Debug.WriteLine(e);
+                        MessageBox.Show(
+                            e.Message,
+                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
+                    // MessageBox.Show("The selected file was: " + fileDialog.FileName, "Sample folder browser dialog");
+                }
+            });
 
             FillTourList();
         }

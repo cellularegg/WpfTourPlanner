@@ -38,8 +38,8 @@
         <DockPanel Width="Auto" Grid.Row="0" Grid.ColumnSpan="12">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_Export" />
-                    <MenuItem Header="_Import" />
+                    <MenuItem Header="_📁Export" Command="{Binding ExportCommand}" />
+                    <MenuItem Header="_📁Import" Command="{Binding ImportCommand}" />
                     <MenuItem Header="_Exit" />
                 </MenuItem>
                 <MenuItem Header="_Edit" />
@@ -96,7 +96,7 @@
         <Button Grid.Row="6" Grid.Column="8" Height="25" Width="25" VerticalAlignment="Center"
                 HorizontalAlignment="Right" Margin="5,7,5,0" Content="➕" />
         <Button Grid.Row="6" Grid.Column="9" Height="25" Width="25" VerticalAlignment="Center"
-                HorizontalAlignment="Center" Margin="5,7,5,0" Content="🗑" Command="{Binding DeleteTourLogCommand}"/>
+                HorizontalAlignment="Center" Margin="5,7,5,0" Content="🗑" Command="{Binding DeleteTourLogCommand}" />
         <Button Grid.Row="6" Grid.Column="10" Height="25" Width="25" VerticalAlignment="Center"
                 HorizontalAlignment="Center" Margin="5,7,5,0" Content="✏" />
         <Button Grid.Row="6" Grid.Column="11" Height="25" Width="25" VerticalAlignment="Center"

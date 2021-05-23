@@ -1,19 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Documents;
+using Newtonsoft.Json;
 
 namespace WpfTourPlanner.Models
 {
     public class Tour
     {
-        public int Id { get; set; }
+        [JsonIgnore] public int Id { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public string Name { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public string Description { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public string Information { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public double DistanceInKm { get; set; }
 
+        [JsonProperty(Required = Required.AllowNull)]
         public IList<TourLog> Logs { get; set; }
-        public Tour(int id, string name, string description, string information, double distanceInKm, IList<TourLog> logs)
+
+        public Tour(int id, string name, string description, string information, double distanceInKm,
+            IList<TourLog> logs)
         {
             Id = id;
             Name = name;

@@ -20,5 +20,9 @@ namespace WpfTourPlanner.BusinessLayer
         bool DeleteTour(int tourId);
 
         bool DeleteTourLog(int tourLogId);
+        
+        bool Export(string folderPath);
+        
+        bool Import(string filePath);
     }
 }

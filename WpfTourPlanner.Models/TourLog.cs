@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Security.Cryptography;
+using Newtonsoft.Json;
 
 namespace WpfTourPlanner.Models
 {
@@ -7,15 +7,21 @@ namespace WpfTourPlanner.Models
     {
         public const int RATING_MIN = 0;
         public const int RATING_MAX = 10;
-        public int Id { get; set; }
+        [JsonIgnore] public int Id { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public string Report { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public DateTime LogDateTime { get; set; }
 
+        [JsonProperty(Required = Required.Always)]
         public double TotalTimeInH { get; set; }
 
         // Rating from 0 - 10
         private int _rating;
 
+        [JsonProperty(Required = Required.Always)]
         public int Rating
         {
             get => _rating;
@@ -36,12 +42,22 @@ namespace WpfTourPlanner.Models
             }
         }
 
+        [JsonProperty(Required = Required.Always)]
         public double HeartRate { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public double AverageSpeedInKmH { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public double TemperatureInC { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public int Breaks { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public int Steps { get; set; }
-        public int TourId { get; set; }
+
+        [JsonIgnore] public int TourId { get; set; }
 
         public TourLog(int id, string report, DateTime logDateTime, double totalTimeInH, double heartRate,
             double averageSpeedInKmH, double temperatureInC, int breaks, int steps, int rating, int tourId)

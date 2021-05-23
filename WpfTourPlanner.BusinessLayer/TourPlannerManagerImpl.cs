@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -43,7 +44,12 @@ namespace WpfTourPlanner.BusinessLayer
             IEnumerable<Tour> tours = GetTours();
             return tours.Where(t =>
                 (t.Name.ToLower().Contains(searchQuery.ToLower())) ||
-                (t.Description.ToLower().Contains(searchQuery.ToLower())));
+                (t.Description.ToLower().Contains(searchQuery.ToLower())) ||
+                (t.Information.ToLower().Contains(searchQuery.ToLower())) ||
+                t.Logs.FirstOrDefault(l => (l.Report.ToLower().Contains(searchQuery.ToLower())) ||
+                                           (l.LogDateTime.ToString(CultureInfo.InvariantCulture).ToLower()
+                                               .Contains(searchQuery.ToLower()))
+                ) != null);
         }
 
         public Tour CreateTour(string name, string description, string information, double distanceInKm)

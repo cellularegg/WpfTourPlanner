@@ -1,4 +1,5 @@
-# swe2 Tour Planner using WPF
+#
+swe2 Tour Planner using WPF
 
 Time Tracking:
 | Date      | time in h | Note                                           |
@@ -18,6 +19,7 @@ Time Tracking:
 | 20-may-21 | 3         | Added update tour and delete tour(log) feature |
 | 23-may-21 | 1.5       | Added import and export feature                |
 | 23-may-21 | 1.5       | Added fulltext search                          |
+| 24-may-21 | 3         | Added report generation                        |
 
 
 ## Todo
@@ -28,7 +30,7 @@ Time Tracking:
 * Write unit tests
 * error handling
 * Navigation
-* pdf report generation
 * Custom Exceptions
+* ~~pdf report generation~~
 * ~~custom ui component~~ -> done image + caption
 * ~~config file~~ -> using App.confing

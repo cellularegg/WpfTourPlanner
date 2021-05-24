@@ -38,13 +38,23 @@
         <DockPanel Width="Auto" Grid.Row="0" Grid.ColumnSpan="12">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_📁Export" Command="{Binding ExportCommand}" />
-                    <MenuItem Header="_📁Import" Command="{Binding ImportCommand}" />
-                    <MenuItem Header="_Exit" />
+                    <MenuItem Header="_Export" Command="{Binding ExportCommand}">
+                        <MenuItem.Icon>📁</MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="_Import" Command="{Binding ImportCommand}">
+                        <MenuItem.Icon>📁</MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="_Generate Summary Report" Command="{Binding GenerateSummaryReportCommand}">
+                        <MenuItem.Icon>📄</MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
-                <MenuItem Header="_Edit" />
-                <MenuItem Header="_Options" />
-                <MenuItem Header="_Help" />
+                <!-- <MenuItem Header="_Edit" /> -->
+                <!-- <MenuItem Header="_Options" /> -->
+                <MenuItem Header="_Help">
+                    <MenuItem Header="_Copy Documentation URL" Command="{Binding ViewOnlineHelpCommand}">
+                        <MenuItem.Icon>❔</MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
             </Menu>
         </DockPanel>
         <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">Search:</Label>
@@ -81,6 +91,8 @@
         <TextBox Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
                  Text="{Binding TourName, UpdateSourceTrigger=PropertyChanged}" />
         <Button Grid.Row="2" Grid.Column="11" Margin="5,5,5,5" Command="{Binding UpdateTourCommand}" Content="Save 💾" />
+        <Button Grid.Row="3" Grid.Column="11" Margin="5,5,5,5" Height="22.96" VerticalAlignment="Top"
+                HorizontalAlignment="Center" Content="Export 📄" Command="{Binding GenerateTourReportCommand}" />
         <Label Grid.Row="3" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Desciption:</Label>
         <TextBox Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
                  TextWrapping="Wrap" AcceptsReturn="True" MinHeight="60"

@@ -24,5 +24,7 @@ namespace WpfTourPlanner.BusinessLayer
         bool Export(string folderPath);
         
         bool Import(string filePath);
+        bool GenerateTourReport(Tour tour, string folderPath);
+        bool GenerateSummaryReport(string folderPath);
     }
 }

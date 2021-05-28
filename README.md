@@ -23,14 +23,26 @@ Time Tracking:
 
 
 ## Todo
-* Mapquest api
-* import export
-* CRUD Tours + logs
-* add logging
-* Write unit tests
-* error handling
+### Mandatory
+* ~~Uses markup-Based UI framework~~
+* ~~Uses MVVM for UI~~
+* ~~Implements a layer-based architecture (UI/BL/DAL)~~
+* ~~Implements at least one design pattern~~
+* ~~Uses a Postgres Database for storing Tour Data~~
+* ~~Does not allow for SQL injection~~
+* ~~Does not use an OR-Mapping Library~~
+* ~~Uses a config file that stores at minimum the DB connection string~~
+* **Integrates the MapQuest API**
+* **Integrates log4j/log4net or similar Log Lib**
+* **Implements at least 20 Unit Tests**
+  
+### Optional
+* Create Tours 
+* Create, update logs
 * Navigation
-* Custom Exceptions
+* Error Handling / Custom Exceptions
+* Async API Call
+* ~~import export~~
 * ~~pdf report generation~~
 * ~~custom ui component~~ -> done image + caption
 * ~~config file~~ -> using App.confing

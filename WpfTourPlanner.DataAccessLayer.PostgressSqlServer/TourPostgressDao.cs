@@ -1,11 +1,15 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
+using Npgsql;
 using WpfTourPlanner.DataAccessLayer.Common;
 using WpfTourPlanner.DataAccessLayer.Dao;
 using WpfTourPlanner.Models;
+using WpfTourPlanner.Models.Exceptions;
 
 namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 {
@@ -77,8 +81,17 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         public IEnumerable<Tour> GetTours()
         {
-            DbCommand getToursCommand = _database.CreateCommand(SQL_GET_ALL_ITEMS);
-            return QueryMediaItemsFromDatabase(getToursCommand);
+
+            try
+            {
+                DbCommand getToursCommand = _database.CreateCommand(SQL_GET_ALL_ITEMS);
+                return QueryMediaItemsFromDatabase(getToursCommand);
+            }
+            catch (NpgsqlException e)
+            {
+                Debug.WriteLine(e);
+                throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
+            }
         }
 
         private IEnumerable<Tour> QueryMediaItemsFromDatabase(DbCommand command)

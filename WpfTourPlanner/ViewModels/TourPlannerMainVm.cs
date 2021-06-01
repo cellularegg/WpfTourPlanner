@@ -383,27 +383,27 @@ namespace WpfTourPlanner.ViewModels
             MessageBox.Show(content, caption, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private bool CanExecuteGenerateTourReport(object obj)
+        public bool CanExecuteGenerateTourReport(object obj)
         {
             return CurrentTour != null;
         }
 
-        private bool CanExecuteDeleteTourLog(object obj)
+        public bool CanExecuteDeleteTourLog(object obj)
         {
             return CurrentLog != null && CurrentLog != null;
         }
 
-        private bool CanExecuteClearSearch(object obj)
+        public bool CanExecuteClearSearch(object obj)
         {
             return !String.IsNullOrWhiteSpace(_searchQuery);
         }
 
-        private bool CanExecuteDeleteTour(object obj)
+        public bool CanExecuteDeleteTour(object obj)
         {
             return CurrentTour != null;
         }
 
-        private bool CanExecuteDuplicateTourLog(object obj)
+        public bool CanExecuteDuplicateTourLog(object obj)
         {
             return CurrentLog != null && CurrentTour != null;
         }
@@ -411,9 +411,18 @@ namespace WpfTourPlanner.ViewModels
         private void FillTourList()
         {
             Tours.Clear();
-            foreach (Tour tour in _tourPlannerManager.GetTours())
+            try
             {
-                Tours.Add(tour);
+                foreach (Tour tour in _tourPlannerManager.GetTours())
+                {
+                    Tours.Add(tour);
+                }
+            }
+            catch (DatabaseException e)
+            {
+                Debug.WriteLine(e);
+                ShowErrorMsgBox(e.Message);
+                Application.Current.Shutdown();
             }
         }
 
@@ -425,12 +434,12 @@ namespace WpfTourPlanner.ViewModels
             CurrentLog = null;
         }
 
-        private bool CanExecuteDuplicateTour(object param)
+        public bool CanExecuteDuplicateTour(object param)
         {
             return CurrentTour != null;
         }
 
-        private bool CanExecuteUpdateTour(object param)
+        public bool CanExecuteUpdateTour(object param)
         {
             return CurrentTour != null && _tourDescription != null && _tourName != null &&
                    !String.IsNullOrWhiteSpace(_tourName) && !String.IsNullOrWhiteSpace(_tourDescription) &&

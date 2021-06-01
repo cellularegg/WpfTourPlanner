@@ -20,6 +20,7 @@ Time Tracking:
 | 23-may-21 | 1.5       | Added import and export feature                |
 | 23-may-21 | 1.5       | Added fulltext search                          |
 | 24-may-21 | 3         | Added report generation                        |
+| 01-jun-21 | 3         | Added Unit Tests                        |
 
 
 ## Todo
@@ -42,6 +43,7 @@ Time Tracking:
 * Navigation
 * Error Handling / Custom Exceptions
 * Async API Call
+* Delete images on Tour delete  
 * ~~import export~~
 * ~~pdf report generation~~
 * ~~custom ui component~~ -> done image + caption

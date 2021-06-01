@@ -42,6 +42,7 @@ namespace WpfTourPlanner.ViewModels
         /// </returns>
         public bool CanExecute(object parameter)
         {
+            // https://stackoverflow.com/questions/7125540/wpf-command-binding-canexecute-parameter
             return _canExecutePredicate == null ? true : _canExecutePredicate(parameter);
         }
 

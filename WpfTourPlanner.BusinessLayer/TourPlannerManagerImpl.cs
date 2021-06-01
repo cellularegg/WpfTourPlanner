@@ -28,7 +28,7 @@ namespace WpfTourPlanner.BusinessLayer
             _summaryReportFileName = summaryReportFileName;
         }
 
-        public IEnumerable<Tour> GetTours()
+        public virtual IEnumerable<Tour> GetTours()
         {
             ITourDao tourDao = DalFactory.CreateTourDao();
             // ToDo check if this is ok

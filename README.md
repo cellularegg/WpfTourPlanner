@@ -22,6 +22,7 @@ Time Tracking:
 | 24-may-21 | 3         | Added report generation                        |
 | 01-jun-21 | 3         | Added Unit Tests                               |
 | 03-jun-21 | 1.5       | Added copy and delete for Images               |
+| 03-jun-21 | 2         | Added basic navigation                         |
 
 
 ## Todo
@@ -41,7 +42,7 @@ Time Tracking:
 ### Optional
 * Create Tours 
 * Create, update logs
-* Navigation
+* ~~Navigation~~ -> basics done
 * Error Handling / Custom Exceptions -> partly done
 * Async API Call
 * ~~Delete images on Tour delete~~  

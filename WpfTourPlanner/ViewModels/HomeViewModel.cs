@@ -11,10 +11,11 @@ using Ookii.Dialogs.Wpf;
 using WpfTourPlanner.BusinessLayer;
 using WpfTourPlanner.Models;
 using WpfTourPlanner.Models.Exceptions;
+using WpfTourPlanner.Stores;
 
 namespace WpfTourPlanner.ViewModels
 {
-    public class TourPlannerMainVm : ViewModelBase
+    public class HomeViewModel : ViewModelBase
     {
         private ITourPlannerManager _tourPlannerManager;
         private Tour _currentTour;
@@ -43,6 +44,9 @@ namespace WpfTourPlanner.ViewModels
         public ICommand GenerateSummaryReportCommand { get; }
         public ICommand ViewOnlineHelpCommand { get; }
 
+        public ICommand NavigateAddTourCommand { get; }
+        public ICommand NavigateAddTourLogCommand { get;  }
+
         public ObservableCollection<Tour> Tours { get; private set; }
 
         public string SearchQuery
@@ -62,12 +66,12 @@ namespace WpfTourPlanner.ViewModels
         {
             get
             {
-                Debug.WriteLine($"Get Current Tour {_currentTour}");
+                //Debug.WriteLine($"Get Current Tour {_currentTour}");
                 return _currentTour;
             }
             set
             {
-                if ((_currentTour != value))
+                if (_currentTour != value)
                 {
                     _currentTour = value;
                     RaisePropertyChangedEvent(nameof(CurrentTour));
@@ -166,7 +170,7 @@ namespace WpfTourPlanner.ViewModels
             }
         }
 
-        public TourPlannerMainVm(ITourPlannerManager tourPlannerManager)
+        public HomeViewModel(ITourPlannerManager tourPlannerManager, NavigationStore navigationStore)
         {
             _tourPlannerManager = tourPlannerManager;
             Tours = new ObservableCollection<Tour>();
@@ -341,6 +345,16 @@ namespace WpfTourPlanner.ViewModels
                     "Help", MessageBoxButton.OK, MessageBoxImage.Information);
             });
 
+            this.NavigateAddTourCommand = new RelayCommand(o =>
+            {
+                navigationStore.CurrentViewModel = new AddTourViewModel(_tourPlannerManager, navigationStore);
+            });
+            // TODO do the same for edit tourlog but with already initialized valeus for input fields
+            this.NavigateAddTourLogCommand = new RelayCommand(o =>
+            {
+                navigationStore.CurrentViewModel = new AddTourLogViewModel(_tourPlannerManager, navigationStore, CurrentTour);
+            }, new Predicate<object>(CanExecuteNavigateAddTourLogViewModel));
+
             FillTourList();
         }
 
@@ -434,5 +448,11 @@ namespace WpfTourPlanner.ViewModels
                    !String.IsNullOrWhiteSpace(_tourDistance) && Double.TryParse(_tourDistance, out double val) &&
                    val > 0;
         }
+
+        public bool CanExecuteNavigateAddTourLogViewModel(object param)
+        {
+            return CurrentTour != null;
+        }
+
     }
 }

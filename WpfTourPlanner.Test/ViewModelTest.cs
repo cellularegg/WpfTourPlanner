@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using WpfTourPlanner.BusinessLayer;
 using WpfTourPlanner.Models;
+using WpfTourPlanner.Stores;
 using WpfTourPlanner.ViewModels;
 
 namespace WpfTourPlanner.Test
@@ -16,6 +17,7 @@ namespace WpfTourPlanner.Test
         // ToDo test setters of TourName, TourDescription and TourDistance
         private Mock<ITourPlannerManager> _tourPlannerManager;
         private IList<Tour> _toursMock;
+        private NavigationStore _navigationStore;
 
         [SetUp]
         public void SetUp()
@@ -30,13 +32,16 @@ namespace WpfTourPlanner.Test
                 })
             };
             _tourPlannerManager.Setup(tpm => tpm.GetTours()).Returns(_toursMock);
+
+            _navigationStore = new NavigationStore();
+            _navigationStore.CurrentViewModel = null;
         }
 
 
         [Test]
         public void Test_Can_Execute_DuplicateTour()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Assert.IsFalse(viewModel.CanExecuteDuplicateTourLog(null));
             viewModel.CurrentTour = _toursMock.FirstOrDefault();
             Assert.IsTrue(viewModel.CanExecuteDuplicateTour(null));
@@ -45,7 +50,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Can_Execute_DeleteTour()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Assert.IsFalse(viewModel.CanExecuteDeleteTour(null));
             viewModel.CurrentTour = _toursMock.FirstOrDefault();
             Assert.IsTrue(viewModel.CanExecuteDeleteTour(null));
@@ -54,7 +59,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Can_Execute_GenerateTourReport()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Assert.IsFalse(viewModel.CanExecuteGenerateTourReport(null));
             viewModel.CurrentTour = _toursMock.FirstOrDefault();
             Assert.IsTrue(viewModel.CanExecuteGenerateTourReport(null));
@@ -63,7 +68,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Can_Execute_ClearSearch()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             viewModel.SearchQuery = string.Empty;
             Assert.IsFalse(viewModel.CanExecuteClearSearch(null));
             viewModel.SearchQuery = "String";
@@ -73,7 +78,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Can_Execute_DuplicateTourLog()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Assert.IsFalse(viewModel.CanExecuteDuplicateTourLog(null));
             viewModel.CurrentTour = _toursMock[1];
             Assert.IsFalse(viewModel.CanExecuteDuplicateTourLog(null));
@@ -84,7 +89,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Can_Execute_DeleteTourLog()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Assert.IsFalse(viewModel.CanExecuteDeleteTourLog(null));
             viewModel.CurrentTour = _toursMock[1];
             Assert.IsFalse(viewModel.CanExecuteDeleteTourLog(null));
@@ -95,7 +100,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Can_Execute_UpdateTour()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Assert.IsFalse(viewModel.CanExecuteUpdateTour(null));
             viewModel.CurrentTour = _toursMock.FirstOrDefault();
             Assert.IsTrue(viewModel.CanExecuteUpdateTour(null));
@@ -111,7 +116,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Get_TourDescription()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Assert.AreEqual(string.Empty, viewModel.TourDescription);
             Tour t = _toursMock.FirstOrDefault();
             viewModel.CurrentTour = t;
@@ -121,7 +126,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Get_TourName()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Assert.AreEqual(string.Empty, viewModel.TourName);
             Tour t = _toursMock.FirstOrDefault();
             viewModel.CurrentTour = t;
@@ -131,7 +136,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Get_TourDistance()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Assert.AreEqual(string.Empty, viewModel.TourDistance);
             Tour t = _toursMock.FirstOrDefault();
             viewModel.CurrentTour = t;
@@ -141,7 +146,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Set_CurrentTour()
         {
-            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object);
+            HomeViewModel viewModel = new HomeViewModel(_tourPlannerManager.Object, _navigationStore);
             Tour t = _toursMock.FirstOrDefault();
             viewModel.CurrentTour = t;
             Assert.AreEqual(t.Name, viewModel.TourName);

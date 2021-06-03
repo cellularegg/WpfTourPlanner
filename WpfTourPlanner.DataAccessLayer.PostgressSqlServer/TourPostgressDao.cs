@@ -45,23 +45,39 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         public Tour AddNewTour(string name, string description, string information, double distanceInKm)
         {
-            DbCommand insertCommand = _database.CreateCommand(SQL_INSERT_NEW_TOUR);
-            _database.DefineParameter(insertCommand, "@Name", DbType.String, name);
-            _database.DefineParameter(insertCommand, "@Description", DbType.String, description);
-            _database.DefineParameter(insertCommand, "@Information", DbType.String, information);
-            _database.DefineParameter(insertCommand, "@DistanceInKm", DbType.Double, distanceInKm);
-            return FindById(_database.ExecuteScalar(insertCommand));
+            try
+            {
+                DbCommand insertCommand = _database.CreateCommand(SQL_INSERT_NEW_TOUR);
+                _database.DefineParameter(insertCommand, "@Name", DbType.String, name);
+                _database.DefineParameter(insertCommand, "@Description", DbType.String, description);
+                _database.DefineParameter(insertCommand, "@Information", DbType.String, information);
+                _database.DefineParameter(insertCommand, "@DistanceInKm", DbType.Double, distanceInKm);
+                return FindById(_database.ExecuteScalar(insertCommand));
+            }
+            catch (NpgsqlException e)
+            {
+                Debug.WriteLine(e);
+                throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
+            }
         }
 
         public Tour UpdateTour(int tourId, string name, string description, string information, double distanceInKm)
         {
-            DbCommand updateCommand = _database.CreateCommand(SQL_UPDATE_TOUR);
-            _database.DefineParameter(updateCommand, "@Id", DbType.Int32, tourId);
-            _database.DefineParameter(updateCommand, "@Name", DbType.String, name);
-            _database.DefineParameter(updateCommand, "@Description", DbType.String, description);
-            _database.DefineParameter(updateCommand, "@Information", DbType.String, information);
-            _database.DefineParameter(updateCommand, "@DistanceInKm", DbType.Double, distanceInKm);
-            return FindById(_database.ExecuteScalar(updateCommand));
+            try
+            {
+                DbCommand updateCommand = _database.CreateCommand(SQL_UPDATE_TOUR);
+                _database.DefineParameter(updateCommand, "@Id", DbType.Int32, tourId);
+                _database.DefineParameter(updateCommand, "@Name", DbType.String, name);
+                _database.DefineParameter(updateCommand, "@Description", DbType.String, description);
+                _database.DefineParameter(updateCommand, "@Information", DbType.String, information);
+                _database.DefineParameter(updateCommand, "@DistanceInKm", DbType.Double, distanceInKm);
+                return FindById(_database.ExecuteScalar(updateCommand));
+            }
+            catch (NpgsqlException e)
+            {
+                Debug.WriteLine(e);
+                throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
+            }
         }
 
         public bool DeleteTour(int tourId)
@@ -92,9 +108,17 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             }
 
 
-            DbCommand deleteCommand = _database.CreateCommand(SQL_DELETE_TOUR);
-            _database.DefineParameter(deleteCommand, "@Id", DbType.Int32, tourId);
-            return _database.ExecuteScalar(deleteCommand) == tourId;
+            try
+            {
+                DbCommand deleteCommand = _database.CreateCommand(SQL_DELETE_TOUR);
+                _database.DefineParameter(deleteCommand, "@Id", DbType.Int32, tourId);
+                return _database.ExecuteScalar(deleteCommand) == tourId;
+            }
+            catch (NpgsqlException e)
+            {
+                Debug.WriteLine(e);
+                throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
+            }
         }
 
         public Tour DuplicateTour(Tour tour)
@@ -126,10 +150,18 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         public Tour FindById(int tourId)
         {
-            DbCommand findCommand = _database.CreateCommand(SQL_FIND_BY_ID);
-            _database.DefineParameter(findCommand, "@Id", DbType.Int32, tourId);
-            IEnumerable<Tour> tours = QueryMediaItemsFromDatabase(findCommand);
-            return tours.FirstOrDefault();
+            try
+            {
+                DbCommand findCommand = _database.CreateCommand(SQL_FIND_BY_ID);
+                _database.DefineParameter(findCommand, "@Id", DbType.Int32, tourId);
+                IEnumerable<Tour> tours = QueryMediaItemsFromDatabase(findCommand);
+                return tours.FirstOrDefault();
+            }
+            catch (NpgsqlException e)
+            {
+                Debug.WriteLine(e);
+                throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
+            }
         }
 
 

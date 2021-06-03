@@ -43,7 +43,6 @@ namespace WpfTourPlanner.ViewModels
         public ICommand GenerateSummaryReportCommand { get; }
         public ICommand ViewOnlineHelpCommand { get; }
 
-        // TODO add other commands
         public ObservableCollection<Tour> Tours { get; private set; }
 
         public string SearchQuery
@@ -192,19 +191,6 @@ namespace WpfTourPlanner.ViewModels
             {
                 if (_currentTour != null)
                 {
-                    // Tour newlyCreatedTour = _tourPlannerManager.CreateTour(CurrentTour.Name + " Copy",
-                    //     CurrentTour.Description,
-                    //     CurrentTour.Information, CurrentTour.DistanceInKm);
-                    // Tours.Add(newlyCreatedTour);
-                    // TourLog newlyCreatedLog;
-                    // foreach (TourLog log in CurrentTour.Logs)
-                    // {
-                    //     newlyCreatedLog = _tourPlannerManager.CreateTourLog(log.Report + " Copy", log.LogDateTime,
-                    //         log.TotalTimeInH,
-                    //         log.Rating, log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps,
-                    //         newlyCreatedTour);
-                    //     newlyCreatedTour.Logs.Add(newlyCreatedLog);
-                    // }
                     Tour duplicate = _tourPlannerManager.DuplicateTour(CurrentTour);
                     Tours.Add(duplicate);
                 }
@@ -424,7 +410,7 @@ namespace WpfTourPlanner.ViewModels
             {
                 Debug.WriteLine(e);
                 ShowErrorMsgBox(e.Message);
-                Application.Current.Shutdown();
+                throw;
             }
         }
 

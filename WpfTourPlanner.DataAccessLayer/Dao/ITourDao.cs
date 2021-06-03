@@ -7,9 +7,10 @@ namespace WpfTourPlanner.DataAccessLayer.Dao
     {
         Tour FindById(int tourId);
         Tour UpdateTour(int tourId, string name, string description, string information, double distanceInKm);
-        Tour AddNewItem(string name, string description, string information, double distanceInKm);
+        Tour AddNewTour(string name, string description, string information, double distanceInKm);
         IEnumerable<Tour> GetTours();
         // TODO update and delete
         bool DeleteTour(int tourId);
+        Tour DuplicateTour(Tour tour);
     }
 }

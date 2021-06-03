@@ -12,6 +12,8 @@ namespace WpfTourPlanner.BusinessLayer
 
         Tour CreateTour(string name, string description, string information, double distanceInKm);
 
+        Tour DuplicateTour(Tour t);
+
         TourLog CreateTourLog(string report, DateTime logDateTime, double totalTimeInH, int rating,
             double heartRate, double averageSpeedInKmH, double temperatureInC, int breaks, int steps, Tour logTour);
 

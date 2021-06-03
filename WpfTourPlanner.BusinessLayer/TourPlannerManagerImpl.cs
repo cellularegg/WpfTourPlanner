@@ -57,7 +57,13 @@ namespace WpfTourPlanner.BusinessLayer
         public Tour CreateTour(string name, string description, string information, double distanceInKm)
         {
             ITourDao tourDao = DalFactory.CreateTourDao();
-            return tourDao.AddNewItem(name, description, information, distanceInKm);
+            return tourDao.AddNewTour(name, description, information, distanceInKm);
+        }
+
+        public Tour DuplicateTour(Tour t)
+        {
+            ITourDao tourDao = DalFactory.CreateTourDao();
+            return tourDao.DuplicateTour(t);
         }
 
         public TourLog CreateTourLog(string report, DateTime logDateTime, double totalTimeInH, int rating,
@@ -157,13 +163,15 @@ namespace WpfTourPlanner.BusinessLayer
             }
 
             string filePath = Path.Combine(folderPath, fileName);
-            // var model = InvoiceDocumentDataSource.GetInvoiceDetails();
-            // var document = new InvoiceDocument(model);
             // TODO Try catch
-            byte[] imageData = File.ReadAllBytes(tour.Information);
+            byte[] imageData = new byte[] { };
+            if (File.Exists(tour.Information))
+            {
+                imageData = File.ReadAllBytes(tour.Information);
+            }
+
             var document = new TourReportDocument(tour, imageData);
             document.GeneratePdf(filePath);
-            // document.GeneratePdf(filePath);
 
             return true;
         }

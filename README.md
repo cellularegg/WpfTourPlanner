@@ -20,7 +20,8 @@ Time Tracking:
 | 23-may-21 | 1.5       | Added import and export feature                |
 | 23-may-21 | 1.5       | Added fulltext search                          |
 | 24-may-21 | 3         | Added report generation                        |
-| 01-jun-21 | 3         | Added Unit Tests                        |
+| 01-jun-21 | 3         | Added Unit Tests                               |
+| 03-jun-21 | 1.5       | Added copy and delete for Images               |
 
 
 ## Todo
@@ -35,15 +36,15 @@ Time Tracking:
 * ~~Uses a config file that stores at minimum the DB connection string~~
 * **Integrates the MapQuest API**
 * **Integrates log4j/log4net or similar Log Lib**
-* **Implements at least 20 Unit Tests**
+* ~~Implements at least 20 Unit Tests~~
   
 ### Optional
 * Create Tours 
 * Create, update logs
 * Navigation
-* Error Handling / Custom Exceptions
+* Error Handling / Custom Exceptions -> partly done
 * Async API Call
-* Delete images on Tour delete  
+* ~~Delete images on Tour delete~~  
 * ~~import export~~
 * ~~pdf report generation~~
 * ~~custom ui component~~ -> done image + caption

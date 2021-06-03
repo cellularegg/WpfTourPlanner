@@ -82,7 +82,9 @@
                   ItemsSource="{Binding Tours}"
                   SelectedItem="{Binding CurrentTour}"
                   DisplayMemberPath="Name"
-                  AlternationCount="2" />
+                  AlternationCount="2"
+                  SelectionMode="Single" />
+
         <GridSplitter Grid.Row="2" Grid.Column="4" Grid.RowSpan="6" Margin="0, 4,0,0" Width="5"
                       HorizontalAlignment="Right" ResizeDirection="Columns" VerticalAlignment="Stretch"
                       ResizeBehavior="PreviousAndNext" ToolTip="Drag vertically to resize" />

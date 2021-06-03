@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Npgsql;
 using WpfTourPlanner.DataAccessLayer.Common;
@@ -21,7 +22,8 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
         private const string SQL_INSERT_NEW_TOUR =
             "INSERT INTO public.\"Tour\" (\"Name\", \"Description\", \"Information\", \"DistanceInKm\") VALUES (@Name, @Description, @Information, @DistanceInKm) RETURNING \"Id\";";
 
-        private const string SQL_UPDATE_TOUR = "UPDATE public.\"Tour\" SET \"Name\"=@Name, \"Description\"=@Description, \"Information\"=@Information, \"DistanceInKm\"=@DistanceInKm WHERE \"Id\"=@Id RETURNING \"Id\";";
+        private const string SQL_UPDATE_TOUR =
+            "UPDATE public.\"Tour\" SET \"Name\"=@Name, \"Description\"=@Description, \"Information\"=@Information, \"DistanceInKm\"=@DistanceInKm WHERE \"Id\"=@Id RETURNING \"Id\";";
 
         private const string SQL_DELETE_TOUR = "DELETE FROM public.\"Tour\" WHERE \"Id\"=@Id RETURNING \"Id\";";
 
@@ -41,7 +43,7 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             _tourLogDao = tourLogDao;
         }
 
-        public Tour AddNewItem(string name, string description, string information, double distanceInKm)
+        public Tour AddNewTour(string name, string description, string information, double distanceInKm)
         {
             DbCommand insertCommand = _database.CreateCommand(SQL_INSERT_NEW_TOUR);
             _database.DefineParameter(insertCommand, "@Name", DbType.String, name);
@@ -64,9 +66,61 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         public bool DeleteTour(int tourId)
         {
+            Tour tourToDelete = this.FindById(tourId);
+            if (tourToDelete == null)
+            {
+                return false;
+            }
+
+            // Check if tour image exists
+            if (File.Exists(tourToDelete.Information))
+            {
+                try
+                {
+                    // Try to delete the image
+                    File.Delete(tourToDelete.Information);
+                }
+                // 
+                catch (UnauthorizedAccessException e)
+                {
+                    Console.WriteLine(e);
+                }
+                catch (IOException e)
+                {
+                    Debug.WriteLine(e);
+                }
+            }
+
+
             DbCommand deleteCommand = _database.CreateCommand(SQL_DELETE_TOUR);
             _database.DefineParameter(deleteCommand, "@Id", DbType.Int32, tourId);
             return _database.ExecuteScalar(deleteCommand) == tourId;
+        }
+
+        public Tour DuplicateTour(Tour tour)
+        {
+            string newFilePath = string.Empty;
+            if (File.Exists(tour.Information) && Path.GetDirectoryName(tour.Information) != null)
+            {
+                newFilePath = Path.Combine(Path.GetDirectoryName(tour.Information),
+                    Path.GetFileNameWithoutExtension(tour.Information) + "_copy" + Path.GetExtension(tour.Information));
+                File.Copy(tour.Information, newFilePath, true);
+            }
+
+            Tour newlyCreatedTour = this.AddNewTour(tour.Name + " Copy", tour.Description, newFilePath, tour.DistanceInKm);
+
+            if (newlyCreatedTour != null)
+            {
+                foreach (TourLog log in tour.Logs)
+                {
+                    _tourLogDao.AddNewTourLog(log.Report + " Copy", log.LogDateTime, log.TotalTimeInH, log.Rating,
+                        log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps,
+                        newlyCreatedTour.Id);
+                    newlyCreatedTour.Logs.Add(log);
+                }
+            }
+
+            return newlyCreatedTour;
         }
 
 
@@ -81,7 +135,6 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         public IEnumerable<Tour> GetTours()
         {
-
             try
             {
                 DbCommand getToursCommand = _database.CreateCommand(SQL_GET_ALL_ITEMS);

@@ -11,9 +11,10 @@ namespace WpfTourPlanner.DataAccessLayer.Dao
         TourLog AddNewTourLog(string report, DateTime logDateTime, double totalTimeInH, int rating, double heartRate,
             double averageSpeedInKmH, double temperatureInC, int breaks, int steps, int tourId);
 
+        TourLog UpdateTourLog(int logId, string report, DateTime logDateTime, double totalTimeInH, int rating, double heartRate,
+            double averageSpeedInKmH, double temperatureInC, int breaks, int steps);
         IList<TourLog> GetLogsForTour(Tour tour);
         IList<TourLog> GetLogsByTourId(int tourId);
-        // TODO update and delete!
         bool DeleteTourLog(int tourLogId);
     }
 }

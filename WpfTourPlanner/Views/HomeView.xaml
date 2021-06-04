@@ -80,7 +80,7 @@
                 Command="{Binding DuplicateTourCommand}" />
         <ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" Grid.RowSpan="5" Margin="5,5,7,5"
                   ItemsSource="{Binding Tours}"
-                  SelectedItem="{Binding CurrentTour}"
+                  SelectedItem="{Binding CurrentTour, Mode=TwoWay}"
                   DisplayMemberPath="Name"
                   AlternationCount="2"
                   SelectionMode="Single" />
@@ -112,7 +112,7 @@
         <Button Grid.Row="6" Grid.Column="9" Height="25" Width="25" VerticalAlignment="Center"
                 HorizontalAlignment="Center" Margin="5,7,5,0" Content="🗑" Command="{Binding DeleteTourLogCommand}" />
         <Button Grid.Row="6" Grid.Column="10" Height="25" Width="25" VerticalAlignment="Center"
-                HorizontalAlignment="Center" Margin="5,7,5,0" Content="✏" />
+                HorizontalAlignment="Center" Margin="5,7,5,0" Content="✏" Command="{Binding NavigateEditTourLogCommand}" />
         <Button Grid.Row="6" Grid.Column="11" Height="25" Width="25" VerticalAlignment="Center"
                 HorizontalAlignment="Left" Margin="5,7,5,0" Content="📋"
                 Command="{Binding DuplicateTourLogCommand}" />

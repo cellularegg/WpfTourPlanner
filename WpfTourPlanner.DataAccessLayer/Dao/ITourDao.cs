@@ -11,6 +11,5 @@ namespace WpfTourPlanner.DataAccessLayer.Dao
         IEnumerable<Tour> GetTours();
         // TODO update and delete
         bool DeleteTour(int tourId);
-        Tour DuplicateTour(Tour tour);
     }
 }

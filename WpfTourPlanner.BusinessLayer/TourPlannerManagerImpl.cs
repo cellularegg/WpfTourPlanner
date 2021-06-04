@@ -63,7 +63,28 @@ namespace WpfTourPlanner.BusinessLayer
         public Tour DuplicateTour(Tour t)
         {
             ITourDao tourDao = DalFactory.CreateTourDao();
-            return tourDao.DuplicateTour(t);
+            ITourLogDao tourLogDao = DalFactory.CreateTourLogDao();
+            string newFilePath = string.Empty;
+            if (File.Exists(t.Information) && Path.GetDirectoryName(t.Information) != null)
+            {
+                newFilePath = Path.Combine(Path.GetDirectoryName(t.Information),
+                    Path.GetFileNameWithoutExtension(t.Information) + "_copy" + Path.GetExtension(t.Information));
+                File.Copy(t.Information, newFilePath, true);
+            }
+
+            Tour duplicate = tourDao.AddNewTour(t.Name + " Copy", t.Description, newFilePath, t.DistanceInKm);
+            if (duplicate != null)
+            {
+                foreach (TourLog log in t.Logs)
+                {
+                    tourLogDao.AddNewTourLog(log.Report + " Copy", log.LogDateTime, log.TotalTimeInH, log.Rating,
+                        log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps,
+                        duplicate.Id);
+                    duplicate.Logs.Add(log);
+                }
+            }
+
+            return duplicate;
         }
 
         public TourLog CreateTourLog(string report, DateTime logDateTime, double totalTimeInH, int rating,
@@ -72,6 +93,14 @@ namespace WpfTourPlanner.BusinessLayer
             ITourLogDao tourLogDao = DalFactory.CreateTourLogDao();
             return tourLogDao.AddNewTourLog(report, logDateTime, totalTimeInH, rating, heartRate, averageSpeedInKmH,
                 temperatureInC, breaks, steps, logTour.Id);
+        }
+
+        public TourLog UpdateTourLog(int logId, string report, DateTime logDateTime, double totalTimeInH, int rating,
+            double heartRate, double averageSpeedInKmH, double temperatureInC, int breaks, int steps)
+        {
+            ITourLogDao tourLogDao = DalFactory.CreateTourLogDao();
+            return tourLogDao.UpdateTourLog(logId, report, logDateTime, totalTimeInH, rating, heartRate,
+                averageSpeedInKmH, temperatureInC, breaks, steps);
         }
 
         public Tour UpdateTour(int tourId, string name, string description, string information, double distanceInKm)
@@ -83,6 +112,29 @@ namespace WpfTourPlanner.BusinessLayer
         public bool DeleteTour(int tourId)
         {
             ITourDao tourDao = DalFactory.CreateTourDao();
+            Tour tourToDelete = tourDao.FindById(tourId);
+            if (tourToDelete == null)
+            {
+                return false;
+            }
+            // Check if tour image exists
+            if (File.Exists(tourToDelete.Information))
+            {
+                try
+                {
+                    // Try to delete the image
+                    File.Delete(tourToDelete.Information);
+                }
+                // 
+                catch (UnauthorizedAccessException e)
+                {
+                    Console.WriteLine(e);
+                }
+                catch (IOException e)
+                {
+                    Debug.WriteLine(e);
+                }
+            }
             return tourDao.DeleteTour(tourId);
         }
 
@@ -194,13 +246,14 @@ namespace WpfTourPlanner.BusinessLayer
 
             return true;
         }
-        
+
         private static bool CrateDirectory(string folderPath)
         {
             if (String.IsNullOrWhiteSpace(folderPath))
             {
                 return false;
             }
+
             if (!Directory.Exists(folderPath) && !String.IsNullOrWhiteSpace(folderPath))
             {
                 try
@@ -243,6 +296,5 @@ namespace WpfTourPlanner.BusinessLayer
 
             return true;
         }
-
     }
 }

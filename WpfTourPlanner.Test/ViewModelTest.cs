@@ -8,6 +8,7 @@ using WpfTourPlanner.BusinessLayer;
 using WpfTourPlanner.Models;
 using WpfTourPlanner.Stores;
 using WpfTourPlanner.ViewModels;
+using WpfTourPlanner.Util;
 
 namespace WpfTourPlanner.Test
 {
@@ -152,6 +153,19 @@ namespace WpfTourPlanner.Test
             Assert.AreEqual(t.Name, viewModel.TourName);
             Assert.AreEqual(t.Description, viewModel.TourDescription);
             Assert.AreEqual(t.DistanceInKm.ToString(), viewModel.TourDistance);
+        }
+
+        [Test]
+        public void Test_Util_IsValidNumber()
+        {
+            Assert.IsTrue(UtilMethods.IsValidNumber("123", TypeCode.Int32));
+            Assert.IsTrue(UtilMethods.IsValidNumber("123,4", TypeCode.Double));
+
+            Assert.IsFalse(UtilMethods.IsValidNumber("999999999999999999999999999999999999", TypeCode.Int32));
+            Assert.IsFalse(UtilMethods.IsValidNumber("999999999999999999999999999999999999999999999",
+                TypeCode.Double));
+            Assert.IsFalse(UtilMethods.IsValidNumber(String.Empty, TypeCode.Int32));
+            Assert.IsFalse(UtilMethods.IsValidNumber("123,4", TypeCode.Double, 0, 1));
         }
     }
 }

@@ -354,3 +354,5 @@ MigrationBackup/
 
 # for local testing only:
 WpfTourPlanner.Test/OtherTests.cs
+
+App.config 

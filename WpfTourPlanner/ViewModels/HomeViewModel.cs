@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using Microsoft.VisualBasic;
 using Ookii.Dialogs.Wpf;
 using WpfTourPlanner.BusinessLayer;
 using WpfTourPlanner.Models;
 using WpfTourPlanner.Models.Exceptions;
 using WpfTourPlanner.Stores;
+using WpfTourPlanner.Util;
 
 namespace WpfTourPlanner.ViewModels
 {
@@ -45,7 +49,8 @@ namespace WpfTourPlanner.ViewModels
         public ICommand ViewOnlineHelpCommand { get; }
 
         public ICommand NavigateAddTourCommand { get; }
-        public ICommand NavigateAddTourLogCommand { get;  }
+        public ICommand NavigateAddTourLogCommand { get; }
+        public ICommand NavigateEditTourLogCommand { get; }
 
         public ObservableCollection<Tour> Tours { get; private set; }
 
@@ -219,7 +224,7 @@ namespace WpfTourPlanner.ViewModels
                     Debug.WriteLine($"Updated Tour: {updatedTour}");
                     if (updatedTour == null)
                     {
-                        ShowErrorMsgBox("Error Tour Could not be updated");
+                        UtilMethods.ShowErrorMsgBox("Error Tour Could not be updated");
                         // TODO custom exception??
                     }
                     else
@@ -229,17 +234,17 @@ namespace WpfTourPlanner.ViewModels
                 }
                 catch (OverflowException ex)
                 {
-                    ShowErrorMsgBox($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}");
+                    UtilMethods.ShowErrorMsgBox($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}");
                     Debug.WriteLine(ex);
                 }
                 catch (FormatException ex)
                 {
-                    ShowErrorMsgBox($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}");
+                    UtilMethods.ShowErrorMsgBox($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}");
                     Debug.WriteLine(ex);
                 }
                 catch (ArgumentNullException ex)
                 {
-                    ShowErrorMsgBox($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}");
+                    UtilMethods.ShowErrorMsgBox($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}");
                     Debug.WriteLine(ex);
                 }
             }, new Predicate<object>(CanExecuteUpdateTour));
@@ -254,7 +259,7 @@ namespace WpfTourPlanner.ViewModels
                 }
                 else
                 {
-                    ShowErrorMsgBox($"Error Tour with Id: {currentTourId} could not be deleted!");
+                    UtilMethods.ShowErrorMsgBox($"Error Tour with Id: {currentTourId} could not be deleted!");
                 }
             }, new Predicate<object>(CanExecuteDeleteTour));
 
@@ -267,7 +272,7 @@ namespace WpfTourPlanner.ViewModels
                 }
                 else
                 {
-                    ShowErrorMsgBox($"Error TourLog with Id: {CurrentLog?.Id} could not be deleted!");
+                    UtilMethods.ShowErrorMsgBox($"Error TourLog with Id: {CurrentLog?.Id} could not be deleted!");
                 }
             }, new Predicate<object>(CanExecuteDeleteTourLog));
 
@@ -291,7 +296,7 @@ namespace WpfTourPlanner.ViewModels
                 fileDialog.Filter = "Json files (*.json)|*.json";
                 if (!VistaFileDialog.IsVistaFileDialogSupported)
                 {
-                    ShowErrorMsgBox(
+                    UtilMethods.ShowErrorMsgBox(
                         "Because you are not using Windows Vista or later, the regular folder browser dialog will be used. Please use Windows Vista to see the new dialog.",
                         "Sample folder browser dialog");
                 }
@@ -307,7 +312,7 @@ namespace WpfTourPlanner.ViewModels
                     catch (InvalidImportFileException e)
                     {
                         Debug.WriteLine(e);
-                        ShowErrorMsgBox(e.Message);
+                        UtilMethods.ShowErrorMsgBox(e.Message);
                     }
 
                     // MessageBox.Show("The selected file was: " + fileDialog.FileName, "Sample folder browser dialog");
@@ -349,12 +354,18 @@ namespace WpfTourPlanner.ViewModels
             {
                 navigationStore.CurrentViewModel = new AddTourViewModel(_tourPlannerManager, navigationStore);
             });
-            // TODO do the same for edit tourlog but with already initialized valeus for input fields
-            this.NavigateAddTourLogCommand = new RelayCommand(o =>
-            {
-                navigationStore.CurrentViewModel = new AddTourLogViewModel(_tourPlannerManager, navigationStore, CurrentTour);
-            }, new Predicate<object>(CanExecuteNavigateAddTourLogViewModel));
-
+            this.NavigateAddTourLogCommand = new RelayCommand(
+                o =>
+                {
+                    navigationStore.CurrentViewModel =
+                        new AddTourLogViewModel(_tourPlannerManager, navigationStore, CurrentTour);
+                }, new Predicate<object>(CanExecuteNavigateAddTourLogViewModel));
+            this.NavigateEditTourLogCommand = new RelayCommand(
+                o =>
+                {
+                    navigationStore.CurrentViewModel = new AddTourLogViewModel(_tourPlannerManager, navigationStore,
+                        CurrentTour, CurrentLog);
+                }, new Predicate<object>(CanExecuteNavigateEditTourLogViewModel));
             FillTourList();
         }
 
@@ -365,7 +376,7 @@ namespace WpfTourPlanner.ViewModels
             // dialog.UseDescriptionForTitle = true;
             if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
             {
-                ShowErrorMsgBox(
+                UtilMethods.ShowErrorMsgBox(
                     "Because you are not using Windows Vista or later, the regular folder browser dialog will be " +
                     "used. Please use Windows Vista to see the new dialog.",
                     "Sample folder browser dialog");
@@ -380,10 +391,6 @@ namespace WpfTourPlanner.ViewModels
             return null;
         }
 
-        private void ShowErrorMsgBox(string content, string caption = "Error")
-        {
-            MessageBox.Show(content, caption, MessageBoxButton.OK, MessageBoxImage.Error);
-        }
 
         public bool CanExecuteGenerateTourReport(object obj)
         {
@@ -423,7 +430,7 @@ namespace WpfTourPlanner.ViewModels
             catch (DatabaseException e)
             {
                 Debug.WriteLine(e);
-                ShowErrorMsgBox(e.Message);
+                UtilMethods.ShowErrorMsgBox(e.Message);
                 throw;
             }
         }
@@ -454,5 +461,10 @@ namespace WpfTourPlanner.ViewModels
             return CurrentTour != null;
         }
 
+
+        public bool CanExecuteNavigateEditTourLogViewModel(object obj)
+        {
+            return CurrentLog != null;
+        }
     }
 }

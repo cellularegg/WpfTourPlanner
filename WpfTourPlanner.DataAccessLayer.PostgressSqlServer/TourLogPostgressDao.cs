@@ -29,6 +29,13 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
                                                       "@TotalTimeInH, @Rating, @HeartRate, @AverageSpeedInKmH," +
                                                       " @TemperatureInC, @Breaks, @Steps, @TourId) RETURNING \"Id\";";
 
+        private const string SQL_UPDATE_TOURLOG = "UPDATE public.\"TourLog\" SET \"Report\"=@Report, " +
+                                                  "\"LogDateTime\"=@LogDateTime, \"TotalTimeInH\"=@TotalTimeInH, " +
+                                                  "\"Rating\"=@Rating, \"HeartRate\"=@HeartRate, " +
+                                                  "\"AverageSpeedInKmH\"=@AverageSpeedInKmH, " +
+                                                  "\"TemperatureInC\"=@TemperatureInC, \"Breaks\"=@Breaks, " +
+                                                  "\"Steps\"=@Steps WHERE \"Id\"=@Id RETURNING \"Id\";";
+
         private const string SQL_DELETE_TOUR_LOG = "DELETE FROM public.\"TourLog\" WHERE \"Id\"=@Id RETURNING \"Id\";";
 
         private IDatabase _database;
@@ -66,6 +73,33 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
                 Debug.WriteLine(e);
                 throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
             }
+        }
+
+        public TourLog UpdateTourLog(int logId, string report, DateTime logDateTime, double totalTimeInH, int rating,
+            double heartRate, double averageSpeedInKmH, double temperatureInC, int breaks, int steps)
+        {
+            try
+            {
+                DbCommand updateCommand = _database.CreateCommand(SQL_UPDATE_TOURLOG);
+                _database.DefineParameter(updateCommand, "@Id", DbType.Int32, logId);
+                _database.DefineParameter(updateCommand, "@Report", DbType.String, report);
+                _database.DefineParameter(updateCommand, "@LogDateTime", DbType.String, logDateTime.ToString());
+                _database.DefineParameter(updateCommand, "@TotalTimeInH", DbType.Double, totalTimeInH);
+                _database.DefineParameter(updateCommand, "@Rating", DbType.Int32, rating);
+                _database.DefineParameter(updateCommand, "@HeartRate", DbType.Double, heartRate);
+                _database.DefineParameter(updateCommand, "@AverageSpeedInKmH", DbType.Double, averageSpeedInKmH);
+                _database.DefineParameter(updateCommand, "@TemperatureInC", DbType.Double, temperatureInC);
+                _database.DefineParameter(updateCommand, "@Breaks", DbType.Int32, breaks);
+                _database.DefineParameter(updateCommand, "@Steps", DbType.Int32, steps);
+                return FindById(_database.ExecuteScalar(updateCommand));
+            }
+            catch (NpgsqlException e)
+            {
+                Debug.WriteLine(e);
+                throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
+            }
+
+            return null;
         }
 
         public bool DeleteTourLog(int tourLogId)

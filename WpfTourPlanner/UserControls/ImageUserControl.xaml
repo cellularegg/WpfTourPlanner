@@ -6,10 +6,13 @@
              mc:Ignorable="d" 
              x:Name="imageUserControl"
              xmlns:viewModels="clr-namespace:WpfTourPlanner.ViewModels"
+             xmlns:util="clr-namespace:WpfTourPlanner.Util"
              d:DataContext="{d:DesignInstance Type=viewModels:HomeViewModel}"
 
              d:DesignHeight="450" d:DesignWidth="800">
-
+    <UserControl.Resources>
+        <util:StringToImageSourceConverter x:Key="StringToImageSourceConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -17,7 +20,7 @@
         </Grid.RowDefinitions>
         <!-- <Label Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding CurrentTour.Information}"/> -->
         <Image Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="{Binding CurrentTour.Information}"
-               Source="{Binding CurrentTour.Information}" Stretch="Uniform" />
-        <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding CurrentTour.Name}"></TextBlock>
+               Source="{Binding CurrentTour.Information, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}}" Stretch="Uniform" />
+        <TextBlock Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding TourName}"></TextBlock>
     </Grid>
 </UserControl>

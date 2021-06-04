@@ -11,10 +11,11 @@ using Ookii.Dialogs.Wpf;
 using WpfTourPlanner.BusinessLayer;
 using WpfTourPlanner.Models;
 using WpfTourPlanner.Models.Exceptions;
+using WpfTourPlanner.Stores;
 
 namespace WpfTourPlanner.ViewModels
 {
-    public class TourPlannerMainVm : ViewModelBase
+    public class HomeViewModel : ViewModelBase
     {
         private ITourPlannerManager _tourPlannerManager;
         private Tour _currentTour;
@@ -39,8 +40,13 @@ namespace WpfTourPlanner.ViewModels
 
         public ICommand ExportCommand { get; }
         public ICommand ImportCommand { get; }
+        public ICommand GenerateTourReportCommand { get; }
+        public ICommand GenerateSummaryReportCommand { get; }
+        public ICommand ViewOnlineHelpCommand { get; }
 
-        // TODO add other commands
+        public ICommand NavigateAddTourCommand { get; }
+        public ICommand NavigateAddTourLogCommand { get;  }
+
         public ObservableCollection<Tour> Tours { get; private set; }
 
         public string SearchQuery
@@ -60,12 +66,12 @@ namespace WpfTourPlanner.ViewModels
         {
             get
             {
-                Debug.WriteLine($"Get Current Tour {_currentTour}");
+                //Debug.WriteLine($"Get Current Tour {_currentTour}");
                 return _currentTour;
             }
             set
             {
-                if ((_currentTour != value))
+                if (_currentTour != value)
                 {
                     _currentTour = value;
                     RaisePropertyChangedEvent(nameof(CurrentTour));
@@ -164,7 +170,7 @@ namespace WpfTourPlanner.ViewModels
             }
         }
 
-        public TourPlannerMainVm(ITourPlannerManager tourPlannerManager)
+        public HomeViewModel(ITourPlannerManager tourPlannerManager, NavigationStore navigationStore)
         {
             _tourPlannerManager = tourPlannerManager;
             Tours = new ObservableCollection<Tour>();
@@ -189,19 +195,8 @@ namespace WpfTourPlanner.ViewModels
             {
                 if (_currentTour != null)
                 {
-                    Tour newlyCreatedTour = _tourPlannerManager.CreateTour(CurrentTour.Name + " Copy",
-                        CurrentTour.Description,
-                        CurrentTour.Information, CurrentTour.DistanceInKm);
-                    Tours.Add(newlyCreatedTour);
-                    TourLog newlyCreatedLog;
-                    foreach (TourLog log in CurrentTour.Logs)
-                    {
-                        newlyCreatedLog = _tourPlannerManager.CreateTourLog(log.Report + " Copy", log.LogDateTime,
-                            log.TotalTimeInH,
-                            log.Rating, log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps,
-                            newlyCreatedTour);
-                        newlyCreatedTour.Logs.Add(newlyCreatedLog);
-                    }
+                    Tour duplicate = _tourPlannerManager.DuplicateTour(CurrentTour);
+                    Tours.Add(duplicate);
                 }
             }, new Predicate<object>(CanExecuteDuplicateTour));
 
@@ -224,8 +219,7 @@ namespace WpfTourPlanner.ViewModels
                     Debug.WriteLine($"Updated Tour: {updatedTour}");
                     if (updatedTour == null)
                     {
-                        MessageBox.Show("Error Tour Could not be updated", "Error", MessageBoxButton.OK,
-                            MessageBoxImage.Error);
+                        ShowErrorMsgBox("Error Tour Could not be updated");
                         // TODO custom exception??
                     }
                     else
@@ -235,20 +229,17 @@ namespace WpfTourPlanner.ViewModels
                 }
                 catch (OverflowException ex)
                 {
-                    MessageBox.Show($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ShowErrorMsgBox($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}");
                     Debug.WriteLine(ex);
                 }
                 catch (FormatException ex)
                 {
-                    MessageBox.Show($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ShowErrorMsgBox($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}");
                     Debug.WriteLine(ex);
                 }
                 catch (ArgumentNullException ex)
                 {
-                    MessageBox.Show($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ShowErrorMsgBox($"Error Tour Could not be updated{Environment.NewLine}{ex.Message}");
                     Debug.WriteLine(ex);
                 }
             }, new Predicate<object>(CanExecuteUpdateTour));
@@ -263,8 +254,7 @@ namespace WpfTourPlanner.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show($"Error Tour with Id: {currentTourId} could not be deleted!",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ShowErrorMsgBox($"Error Tour with Id: {currentTourId} could not be deleted!");
                 }
             }, new Predicate<object>(CanExecuteDeleteTour));
 
@@ -277,29 +267,18 @@ namespace WpfTourPlanner.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show($"Error TourLog with Id: {CurrentLog?.Id} could not be deleted!",
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ShowErrorMsgBox($"Error TourLog with Id: {CurrentLog?.Id} could not be deleted!");
                 }
             }, new Predicate<object>(CanExecuteDeleteTourLog));
 
             this.ExportCommand = new RelayCommand(o =>
             {
                 Debug.WriteLine("Exporting");
-                VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
-                // dialog.Description = "Please select a folder.";
-                // dialog.UseDescriptionForTitle = true;
-                if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
-                {
-                    MessageBox.Show(
-                        "Because you are not using Windows Vista or later, the regular folder browser dialog will be used. Please use Windows Vista to see the new dialog.",
-                        "Sample folder browser dialog", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
 
-                bool? dialogResult = dialog.ShowDialog();
-                if (dialogResult != null && (bool) dialogResult)
+                string folderPath = OpenFolderSelectionDialog();
+                if (folderPath != null)
                 {
-                    _tourPlannerManager.Export(dialog.SelectedPath);
-                    MessageBox.Show("The selected folder was: " + dialog.SelectedPath, "Sample folder browser dialog");
+                    _tourPlannerManager.Export(folderPath);
                 }
             });
 
@@ -310,11 +289,11 @@ namespace WpfTourPlanner.ViewModels
                 fileDialog.Multiselect = false;
                 fileDialog.CheckFileExists = true;
                 fileDialog.Filter = "Json files (*.json)|*.json";
-                if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
+                if (!VistaFileDialog.IsVistaFileDialogSupported)
                 {
-                    MessageBox.Show(
+                    ShowErrorMsgBox(
                         "Because you are not using Windows Vista or later, the regular folder browser dialog will be used. Please use Windows Vista to see the new dialog.",
-                        "Sample folder browser dialog", MessageBoxButton.OK, MessageBoxImage.Error);
+                        "Sample folder browser dialog");
                 }
 
                 bool? dialogResult = fileDialog.ShowDialog();
@@ -328,34 +307,105 @@ namespace WpfTourPlanner.ViewModels
                     catch (InvalidImportFileException e)
                     {
                         Debug.WriteLine(e);
-                        MessageBox.Show(
-                            e.Message,
-                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        ShowErrorMsgBox(e.Message);
                     }
 
                     // MessageBox.Show("The selected file was: " + fileDialog.FileName, "Sample folder browser dialog");
                 }
             });
 
+            this.GenerateTourReportCommand = new RelayCommand(o =>
+                {
+                    Debug.WriteLine("Generating tour report");
+                    string folderPath = OpenFolderSelectionDialog();
+                    if (folderPath != null)
+                    {
+                        _tourPlannerManager.GenerateTourReport(CurrentTour, folderPath);
+                    }
+                },
+                new Predicate<object>(CanExecuteGenerateTourReport));
+
+            this.GenerateSummaryReportCommand = new RelayCommand(o =>
+            {
+                Debug.WriteLine("Generating summary report");
+                string folderPath = OpenFolderSelectionDialog();
+                if (folderPath != null)
+                {
+                    _tourPlannerManager.GenerateSummaryReport(folderPath);
+                }
+            });
+
+            this.ViewOnlineHelpCommand = new RelayCommand(o =>
+            {
+                string url = "https://github.com/cellularegg/WpfTourPlanner/blob/main/README.md";
+                Clipboard.SetText(url);
+                MessageBox.Show(
+                    $"The Url of the documentation has been copied to your clipboard!{Environment.NewLine}" +
+                    $"URL:{Environment.NewLine}{url}",
+                    "Help", MessageBoxButton.OK, MessageBoxImage.Information);
+            });
+
+            this.NavigateAddTourCommand = new RelayCommand(o =>
+            {
+                navigationStore.CurrentViewModel = new AddTourViewModel(_tourPlannerManager, navigationStore);
+            });
+            // TODO do the same for edit tourlog but with already initialized valeus for input fields
+            this.NavigateAddTourLogCommand = new RelayCommand(o =>
+            {
+                navigationStore.CurrentViewModel = new AddTourLogViewModel(_tourPlannerManager, navigationStore, CurrentTour);
+            }, new Predicate<object>(CanExecuteNavigateAddTourLogViewModel));
+
             FillTourList();
         }
 
-        private bool CanExecuteDeleteTourLog(object obj)
+        private string OpenFolderSelectionDialog()
         {
-            return CurrentLog != null && CurrentLog != null;
+            VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            // dialog.Description = "Please select a folder.";
+            // dialog.UseDescriptionForTitle = true;
+            if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
+            {
+                ShowErrorMsgBox(
+                    "Because you are not using Windows Vista or later, the regular folder browser dialog will be " +
+                    "used. Please use Windows Vista to see the new dialog.",
+                    "Sample folder browser dialog");
+            }
+
+            bool? dialogResult = dialog.ShowDialog();
+            if (dialogResult != null && (bool) dialogResult)
+            {
+                return dialog.SelectedPath;
+            }
+
+            return null;
         }
 
-        private bool CanExecuteClearSearch(object obj)
+        private void ShowErrorMsgBox(string content, string caption = "Error")
         {
-            return !String.IsNullOrWhiteSpace(_searchQuery);
+            MessageBox.Show(content, caption, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private bool CanExecuteDeleteTour(object obj)
+        public bool CanExecuteGenerateTourReport(object obj)
         {
             return CurrentTour != null;
         }
 
-        private bool CanExecuteDuplicateTourLog(object obj)
+        public bool CanExecuteDeleteTourLog(object obj)
+        {
+            return CurrentLog != null && CurrentLog != null;
+        }
+
+        public bool CanExecuteClearSearch(object obj)
+        {
+            return !String.IsNullOrWhiteSpace(_searchQuery);
+        }
+
+        public bool CanExecuteDeleteTour(object obj)
+        {
+            return CurrentTour != null;
+        }
+
+        public bool CanExecuteDuplicateTourLog(object obj)
         {
             return CurrentLog != null && CurrentTour != null;
         }
@@ -363,9 +413,18 @@ namespace WpfTourPlanner.ViewModels
         private void FillTourList()
         {
             Tours.Clear();
-            foreach (Tour tour in _tourPlannerManager.GetTours())
+            try
             {
-                Tours.Add(tour);
+                foreach (Tour tour in _tourPlannerManager.GetTours())
+                {
+                    Tours.Add(tour);
+                }
+            }
+            catch (DatabaseException e)
+            {
+                Debug.WriteLine(e);
+                ShowErrorMsgBox(e.Message);
+                throw;
             }
         }
 
@@ -377,17 +436,23 @@ namespace WpfTourPlanner.ViewModels
             CurrentLog = null;
         }
 
-        private bool CanExecuteDuplicateTour(object param)
+        public bool CanExecuteDuplicateTour(object param)
         {
             return CurrentTour != null;
         }
 
-        private bool CanExecuteUpdateTour(object param)
+        public bool CanExecuteUpdateTour(object param)
         {
             return CurrentTour != null && _tourDescription != null && _tourName != null &&
                    !String.IsNullOrWhiteSpace(_tourName) && !String.IsNullOrWhiteSpace(_tourDescription) &&
                    !String.IsNullOrWhiteSpace(_tourDistance) && Double.TryParse(_tourDistance, out double val) &&
                    val > 0;
         }
+
+        public bool CanExecuteNavigateAddTourLogViewModel(object param)
+        {
+            return CurrentTour != null;
+        }
+
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using QuestPDF.Fluent;
+using WpfTourPlanner.BusinessLayer.DocumentTemplates;
 using WpfTourPlanner.DataAccessLayer.Common;
 using WpfTourPlanner.DataAccessLayer.Dao;
 using WpfTourPlanner.Models;
@@ -19,12 +19,16 @@ namespace WpfTourPlanner.BusinessLayer
     {
         private readonly string _exportFileName;
 
-        public TourPlannerManagerImpl(string exportFileName = "WpfTourPlanner.Json")
+        private readonly string _summaryReportFileName;
+
+        public TourPlannerManagerImpl(string exportFileName = "WpfTourPlanner.Json",
+            string summaryReportFileName = "Report.pdf")
         {
             _exportFileName = exportFileName;
+            _summaryReportFileName = summaryReportFileName;
         }
 
-        public IEnumerable<Tour> GetTours()
+        public virtual IEnumerable<Tour> GetTours()
         {
             ITourDao tourDao = DalFactory.CreateTourDao();
             // ToDo check if this is ok
@@ -39,17 +43,27 @@ namespace WpfTourPlanner.BusinessLayer
 
         public IEnumerable<Tour> Search(string searchQuery)
         {
-            // TODO search tour logs as well
             IEnumerable<Tour> tours = GetTours();
             return tours.Where(t =>
                 (t.Name.ToLower().Contains(searchQuery.ToLower())) ||
-                (t.Description.ToLower().Contains(searchQuery.ToLower())));
+                (t.Description.ToLower().Contains(searchQuery.ToLower())) ||
+                (t.Information.ToLower().Contains(searchQuery.ToLower())) ||
+                t.Logs.FirstOrDefault(l => (l.Report.ToLower().Contains(searchQuery.ToLower())) ||
+                                           (l.LogDateTime.ToString(CultureInfo.InvariantCulture).ToLower()
+                                               .Contains(searchQuery.ToLower()))
+                ) != null);
         }
 
         public Tour CreateTour(string name, string description, string information, double distanceInKm)
         {
             ITourDao tourDao = DalFactory.CreateTourDao();
-            return tourDao.AddNewItem(name, description, information, distanceInKm);
+            return tourDao.AddNewTour(name, description, information, distanceInKm);
+        }
+
+        public Tour DuplicateTour(Tour t)
+        {
+            ITourDao tourDao = DalFactory.CreateTourDao();
+            return tourDao.DuplicateTour(t);
         }
 
         public TourLog CreateTourLog(string report, DateTime logDateTime, double totalTimeInH, int rating,
@@ -80,44 +94,9 @@ namespace WpfTourPlanner.BusinessLayer
 
         public bool Export(string folderPath)
         {
-            if (!Directory.Exists(folderPath) && !String.IsNullOrWhiteSpace(folderPath))
+            if (!CrateDirectory(folderPath))
             {
-                try
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-                catch (DirectoryNotFoundException e)
-                {
-                    Debug.WriteLine("The specified path is invalid (for example, it is on an unmapped drive).");
-                    Debug.WriteLine(e);
-                    return false;
-                }
-                catch (NotSupportedException e)
-                {
-                    Debug.WriteLine(
-                        "path contains a colon character (:) that is not part of a drive label (\"C:\\\").");
-                    Debug.WriteLine(e);
-                    return false;
-                }
-                catch (UnauthorizedAccessException e)
-                {
-                    Debug.WriteLine("The caller does not have the required permission.");
-                    Debug.WriteLine(e);
-                    return false;
-                }
-                catch (PathTooLongException e)
-                {
-                    Debug.WriteLine(
-                        "The specified path, file name, or both exceed the system-defined maximum length..");
-                    Debug.WriteLine(e);
-                    return false;
-                }
-                catch (IOException e)
-                {
-                    Debug.WriteLine("The directory specified by path is a file.The network name is not known.");
-                    Debug.WriteLine(e);
-                    return false;
-                }
+                return false;
             }
 
             IEnumerable<Tour> tours = this.GetTours();
@@ -129,6 +108,7 @@ namespace WpfTourPlanner.BusinessLayer
 
             return true;
         }
+
 
         public bool Import(string filePath)
         {
@@ -172,5 +152,97 @@ namespace WpfTourPlanner.BusinessLayer
 
             return false;
         }
+
+        public bool GenerateTourReport(Tour tour, string folderPath)
+        {
+            string fileName = tour.Name + ".pdf";
+            // Try to create the directory if it does not exist
+            if (!CrateDirectory(folderPath))
+            {
+                return false;
+            }
+
+            string filePath = Path.Combine(folderPath, fileName);
+            // TODO Try catch
+            byte[] imageData = new byte[] { };
+            if (File.Exists(tour.Information))
+            {
+                imageData = File.ReadAllBytes(tour.Information);
+            }
+
+            var document = new TourReportDocument(tour, imageData);
+            document.GeneratePdf(filePath);
+
+            return true;
+        }
+
+        public bool GenerateSummaryReport(string folderPath)
+        {
+            // Try to create the directory if it does not exist
+            if (!CrateDirectory(folderPath))
+            {
+                return false;
+            }
+
+            string filePath = Path.Combine(folderPath, _summaryReportFileName);
+            // var model = InvoiceDocumentDataSource.GetInvoiceDetails();
+            // var document = new InvoiceDocument(model);
+            // TODO Try catch
+            IEnumerable<Tour> tours = GetTours();
+            var document = new SummaryReportDocument(tours);
+            document.GeneratePdf(filePath);
+
+            return true;
+        }
+        
+        private static bool CrateDirectory(string folderPath)
+        {
+            if (String.IsNullOrWhiteSpace(folderPath))
+            {
+                return false;
+            }
+            if (!Directory.Exists(folderPath) && !String.IsNullOrWhiteSpace(folderPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    Debug.WriteLine("The specified path is invalid (for example, it is on an unmapped drive).");
+                    Debug.WriteLine(e);
+                    return false;
+                }
+                catch (NotSupportedException e)
+                {
+                    Debug.WriteLine(
+                        "path contains a colon character (:) that is not part of a drive label (\"C:\\\").");
+                    Debug.WriteLine(e);
+                    return false;
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    Debug.WriteLine("The caller does not have the required permission.");
+                    Debug.WriteLine(e);
+                    return false;
+                }
+                catch (PathTooLongException e)
+                {
+                    Debug.WriteLine(
+                        "The specified path, file name, or both exceed the system-defined maximum length..");
+                    Debug.WriteLine(e);
+                    return false;
+                }
+                catch (IOException e)
+                {
+                    Debug.WriteLine("The directory specified by path is a file.The network name is not known.");
+                    Debug.WriteLine(e);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
     }
 }

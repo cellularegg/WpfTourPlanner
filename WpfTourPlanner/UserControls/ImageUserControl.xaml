@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              x:Name="imageUserControl"
              xmlns:viewModels="clr-namespace:WpfTourPlanner.ViewModels"
-             d:DataContext="{d:DesignInstance Type=viewModels:TourPlannerMainVm}"
+             d:DataContext="{d:DesignInstance Type=viewModels:HomeViewModel}"
 
              d:DesignHeight="450" d:DesignWidth="800">
 

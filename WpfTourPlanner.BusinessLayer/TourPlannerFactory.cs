@@ -11,9 +11,11 @@ namespace WpfTourPlanner.BusinessLayer
             if (_manager == null)
             {
                 string exportFileName = ConfigurationManager.AppSettings["ExportFileName"];
+                string summaryReportFileName = ConfigurationManager.AppSettings["SummaryReportFileName"];
+
                 if (exportFileName != null)
                 {
-                    _manager = new TourPlannerManagerImpl(exportFileName);
+                    _manager = new TourPlannerManagerImpl(exportFileName, summaryReportFileName);
                 }
                 else
                 {

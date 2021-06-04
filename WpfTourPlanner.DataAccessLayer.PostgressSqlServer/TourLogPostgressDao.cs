@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using Npgsql;
 using WpfTourPlanner.DataAccessLayer.Common;
 using WpfTourPlanner.DataAccessLayer.Dao;
 using WpfTourPlanner.Models;
+using WpfTourPlanner.Models.Exceptions;
 
 namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 {
@@ -43,25 +46,41 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
         public TourLog AddNewTourLog(string report, DateTime logDateTime, double totalTimeInH, int rating,
             double heartRate, double averageSpeedInKmH, double temperatureInC, int breaks, int steps, int tourId)
         {
-            DbCommand insertCommand = _database.CreateCommand(SQL_INSERT_NEW_TOURLOG);
-            _database.DefineParameter(insertCommand, "@Report", DbType.String, report);
-            _database.DefineParameter(insertCommand, "@LogDateTime", DbType.String, logDateTime.ToString());
-            _database.DefineParameter(insertCommand, "@TotalTimeInH", DbType.Double, totalTimeInH);
-            _database.DefineParameter(insertCommand, "@Rating", DbType.Int32, rating);
-            _database.DefineParameter(insertCommand, "@HeartRate", DbType.Double, heartRate);
-            _database.DefineParameter(insertCommand, "@AverageSpeedInKmH", DbType.Double, averageSpeedInKmH);
-            _database.DefineParameter(insertCommand, "@TemperatureInC", DbType.Double, temperatureInC);
-            _database.DefineParameter(insertCommand, "@Breaks", DbType.Int32, breaks);
-            _database.DefineParameter(insertCommand, "@Steps", DbType.Int32, steps);
-            _database.DefineParameter(insertCommand, "@TourId", DbType.Int32, tourId);
-            return FindById(_database.ExecuteScalar(insertCommand));
+            try
+            {
+                DbCommand insertCommand = _database.CreateCommand(SQL_INSERT_NEW_TOURLOG);
+                _database.DefineParameter(insertCommand, "@Report", DbType.String, report);
+                _database.DefineParameter(insertCommand, "@LogDateTime", DbType.String, logDateTime.ToString());
+                _database.DefineParameter(insertCommand, "@TotalTimeInH", DbType.Double, totalTimeInH);
+                _database.DefineParameter(insertCommand, "@Rating", DbType.Int32, rating);
+                _database.DefineParameter(insertCommand, "@HeartRate", DbType.Double, heartRate);
+                _database.DefineParameter(insertCommand, "@AverageSpeedInKmH", DbType.Double, averageSpeedInKmH);
+                _database.DefineParameter(insertCommand, "@TemperatureInC", DbType.Double, temperatureInC);
+                _database.DefineParameter(insertCommand, "@Breaks", DbType.Int32, breaks);
+                _database.DefineParameter(insertCommand, "@Steps", DbType.Int32, steps);
+                _database.DefineParameter(insertCommand, "@TourId", DbType.Int32, tourId);
+                return FindById(_database.ExecuteScalar(insertCommand));
+            }
+            catch (NpgsqlException e)
+            {
+                Debug.WriteLine(e);
+                throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
+            }
         }
 
         public bool DeleteTourLog(int tourLogId)
         {
-            DbCommand deleteCommand = _database.CreateCommand(SQL_DELETE_TOUR_LOG);
-            _database.DefineParameter(deleteCommand, "@Id", DbType.Int32, tourLogId);
-            return _database.ExecuteScalar(deleteCommand) == tourLogId;
+            try
+            {
+                DbCommand deleteCommand = _database.CreateCommand(SQL_DELETE_TOUR_LOG);
+                _database.DefineParameter(deleteCommand, "@Id", DbType.Int32, tourLogId);
+                return _database.ExecuteScalar(deleteCommand) == tourLogId;
+            }
+            catch (NpgsqlException e)
+            {
+                Debug.WriteLine(e);
+                throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
+            }
         }
 
 
@@ -89,28 +108,36 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 
         private IList<TourLog> QueryTourLogsFromDb(DbCommand command)
         {
-            List<TourLog> tourLogs = new List<TourLog>();
-            using (IDataReader reader = _database.ExecuteReader(command))
+            try
             {
-                while (reader.Read())
+                List<TourLog> tourLogs = new List<TourLog>();
+                using (IDataReader reader = _database.ExecuteReader(command))
                 {
-                    tourLogs.Add(new TourLog(
-                        (int) reader["Id"],
-                        (string) reader["Report"],
-                        DateTime.Parse(reader["LogDateTime"].ToString()),
-                        (double) reader["TotalTimeInH"],
-                        (double) reader["HeartRate"],
-                        (double) reader["AverageSpeedInKmH"],
-                        (double) reader["TemperatureInC"],
-                        (int) reader["Breaks"],
-                        (int) reader["Steps"],
-                        (int) reader["Rating"],
-                        (int) reader["TourId"]
-                    ));
+                    while (reader.Read())
+                    {
+                        tourLogs.Add(new TourLog(
+                            (int) reader["Id"],
+                            (string) reader["Report"],
+                            DateTime.Parse(reader["LogDateTime"].ToString()),
+                            (double) reader["TotalTimeInH"],
+                            (double) reader["HeartRate"],
+                            (double) reader["AverageSpeedInKmH"],
+                            (double) reader["TemperatureInC"],
+                            (int) reader["Breaks"],
+                            (int) reader["Steps"],
+                            (int) reader["Rating"],
+                            (int) reader["TourId"]
+                        ));
+                    }
                 }
-            }
 
-            return tourLogs;
+                return tourLogs;
+            }
+            catch (NpgsqlException e)
+            {
+                Debug.WriteLine(e);
+                throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
+            }
         }
     }
 }

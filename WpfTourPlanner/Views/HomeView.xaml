@@ -1,0 +1,136 @@
+﻿<UserControl x:Class="WpfTourPlanner.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfTourPlanner.Views"
+            xmlns:viewModels="clr-namespace:WpfTourPlanner.ViewModels"
+        xmlns:userControls="clr-namespace:WpfTourPlanner.UserControls"
+        d:DataContext="{d:DesignInstance Type=viewModels:HomeViewModel}"
+        mc:Ignorable="d"
+         d:DesignHeight="720" d:DesignWidth="1080">
+    <!-- Emoji reference: https://www.unicode.org/emoji/charts/full-emoji-list.html -->
+    <Grid ShowGridLines="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="45" />
+            <ColumnDefinition Width="Auto" MinWidth="35" />
+            <ColumnDefinition Width="Auto" MinWidth="35" />
+            <ColumnDefinition Width="Auto" MinWidth="40" />
+            <ColumnDefinition Width="Auto" MinWidth="35" />
+            <ColumnDefinition Width="Auto" MinWidth="25" />
+            <ColumnDefinition Width="1*" MinWidth="25" />
+            <ColumnDefinition Width="1*" MinWidth="25" />
+            <ColumnDefinition Width="1*" MinWidth="25" />
+            <ColumnDefinition Width="Auto" MinWidth="25" />
+            <ColumnDefinition Width="Auto" MinWidth="25" />
+            <ColumnDefinition Width="Auto" MinWidth="25" />
+        </Grid.ColumnDefinitions>
+        <DockPanel Width="Auto" Grid.Row="0" Grid.ColumnSpan="12">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Export" Command="{Binding ExportCommand}">
+                        <MenuItem.Icon>📁</MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="_Import" Command="{Binding ImportCommand}">
+                        <MenuItem.Icon>📁</MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="_Generate Summary Report" Command="{Binding GenerateSummaryReportCommand}">
+                        <MenuItem.Icon>📄</MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <!-- <MenuItem Header="_Edit" /> -->
+                <!-- <MenuItem Header="_Options" /> -->
+                <MenuItem Header="_Help">
+                    <MenuItem Header="_Copy Documentation URL" Command="{Binding ViewOnlineHelpCommand}">
+                        <MenuItem.Icon>❔</MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">Search:</Label>
+        <TextBox Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="7" VerticalAlignment="Center"
+                 HorizontalContentAlignment="Stretch" Margin="5,2,5,0"
+                 Name="txtSearch" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" />
+        <Button Grid.Row="1" Grid.Column="10" Width="Auto" HorizontalAlignment="Center" Margin="5, 2, 5, 0"
+                Command="{Binding SearchCommand}" Padding="3" Content="🔍" />
+        <Button Grid.Row="1" Grid.Column="11" Width="Auto" HorizontalAlignment="Center" Margin="5, 2, 5, 0"
+                Command="{Binding ClearSearchCommand}" Padding="3" Content="Clear 🗑" />
+        <Separator Grid.Row="2" Grid.ColumnSpan="12" Grid.Column="0" VerticalAlignment="Top" Height="Auto" />
+        <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Width="Auto" Height="Auto" VerticalAlignment="Center"
+               HorizontalAlignment="Left" Margin="5,2,5,2" Content="Tours:" />
+        <Button Grid.Row="2" Grid.Column="1" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center"
+                Width="25" Padding="3" Margin="5,7,5,2" Content="➕" Command="{Binding NavigateAddTourCommand}" />
+        <Button Grid.Row="2" Grid.Column="2" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center"
+                Width="25" Padding="3" Margin="5,7,5,2" Content="🗑"
+                Command="{Binding DeleteTourCommand}" />
+        <!-- <Button Grid.Row="2" Grid.Column="3" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Left"
+                Width="25" Padding="3" Margin="5,7,5,2" Content="✏" /> -->
+        <Button Grid.Row="2" Grid.Column="3" Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Left"
+                Width="25" Padding="3" Margin="5,7,7,2" Content="📋"
+                Command="{Binding DuplicateTourCommand}" />
+        <ListView Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" Grid.RowSpan="5" Margin="5,5,7,5"
+                  ItemsSource="{Binding Tours}"
+                  SelectedItem="{Binding CurrentTour}"
+                  DisplayMemberPath="Name"
+                  AlternationCount="2"
+                  SelectionMode="Single" />
+
+        <GridSplitter Grid.Row="2" Grid.Column="4" Grid.RowSpan="6" Margin="0, 4,0,0" Width="5"
+                      HorizontalAlignment="Right" ResizeDirection="Columns" VerticalAlignment="Stretch"
+                      ResizeBehavior="PreviousAndNext" ToolTip="Drag vertically to resize" />
+
+        <Label Grid.Row="2" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Name:</Label>
+        <TextBox Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
+                 Text="{Binding TourName, UpdateSourceTrigger=PropertyChanged}" />
+        <Button Grid.Row="2" Grid.Column="11" Margin="5,5,5,5" Command="{Binding UpdateTourCommand}" Content="Save 💾" />
+        <Button Grid.Row="3" Grid.Column="11" Margin="5,5,5,5" Height="22.96" VerticalAlignment="Top"
+                HorizontalAlignment="Center" Content="Export 📄" Command="{Binding GenerateTourReportCommand}" />
+        <Label Grid.Row="3" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Desciption:</Label>
+        <TextBox Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
+                 TextWrapping="Wrap" AcceptsReturn="True" MinHeight="60"
+                 Text="{Binding TourDescription, UpdateSourceTrigger=PropertyChanged}" />
+        <Label Grid.Row="4" Grid.Column="5" Width="Auto" HorizontalAlignment="Left">Distance In Km:</Label>
+        <TextBox Grid.Row="4" Grid.Column="6" Grid.ColumnSpan="5" VerticalAlignment="Center" Margin="5,2,5,2"
+                 Text="{Binding TourDistance, UpdateSourceTrigger=PropertyChanged}" />
+        <userControls:ImageUserControl Grid.Row="5" Grid.Column="5" Grid.ColumnSpan="7" Margin="5,5,5,5" />
+        <GridSplitter Grid.Row="6" Grid.Column="5" Grid.ColumnSpan="7" HorizontalAlignment="Stretch" Height="5"
+                      ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" VerticalAlignment="Top"
+                      ToolTip="Drag vertically to resize" />
+        <Label Grid.Row="6" Grid.Column="5">Logs:</Label>
+        <Button Grid.Row="6" Grid.Column="8" Height="25" Width="25" VerticalAlignment="Center"
+                HorizontalAlignment="Right" Margin="5,7,5,0" Content="➕" Command="{Binding NavigateAddTourLogCommand}" />
+        <Button Grid.Row="6" Grid.Column="9" Height="25" Width="25" VerticalAlignment="Center"
+                HorizontalAlignment="Center" Margin="5,7,5,0" Content="🗑" Command="{Binding DeleteTourLogCommand}" />
+        <Button Grid.Row="6" Grid.Column="10" Height="25" Width="25" VerticalAlignment="Center"
+                HorizontalAlignment="Center" Margin="5,7,5,0" Content="✏" />
+        <Button Grid.Row="6" Grid.Column="11" Height="25" Width="25" VerticalAlignment="Center"
+                HorizontalAlignment="Left" Margin="5,7,5,0" Content="📋"
+                Command="{Binding DuplicateTourLogCommand}" />
+        <DataGrid Grid.Row="7" Grid.Column="5" Grid.ColumnSpan="7" Margin="5,5,5,5" SelectionMode="Single"
+                  ItemsSource="{Binding CurrentTour.Logs}" AutoGenerateColumns="False"
+                  SelectedItem="{Binding CurrentLog}" AlternationCount="2" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Report" Binding="{Binding Path=Report}" />
+                <DataGridTextColumn Header="Date Time" Binding="{Binding Path=LogDateTime}" />
+                <DataGridTextColumn Header="Time in h" Binding="{Binding Path=TotalTimeInH}" />
+                <DataGridTextColumn Header="Rating" Binding="{Binding Path=Rating}" />
+                <DataGridTextColumn Header="Heart rate" Binding="{Binding Path=HeartRate}" />
+                <DataGridTextColumn Header="Average Speed in km/h" Binding="{Binding Path=AverageSpeedInKmH}" />
+                <DataGridTextColumn Header="Temperature in °C" Binding="{Binding Path=TemperatureInC}" />
+                <DataGridTextColumn Header="Breaks" Binding="{Binding Path=Breaks}" />
+                <DataGridTextColumn Header="Steps" Binding="{Binding Path=Steps}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</UserControl>

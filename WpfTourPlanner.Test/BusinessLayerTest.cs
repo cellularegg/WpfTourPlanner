@@ -23,7 +23,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Search_For_Name()
         {
-            var tpMock = new Mock<TourPlannerManagerImpl>("Export.json", "Report.pdf");
+            var tpMock = new Mock<TourPlannerManagerImpl>("apikey","Export.json", "Report.pdf", ".");
             IList<Tour> toursMock = new List<Tour>
             {
                 new Tour(0, "Name", "Descr1", "Filepath", 10, new List<TourLog>()),
@@ -42,7 +42,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Search_For_Description()
         {
-            var tpMock = new Mock<TourPlannerManagerImpl>("Export.json", "Report.pdf");
+            var tpMock = new Mock<TourPlannerManagerImpl>("apikey","Export.json", "Report.pdf", ".");
             IList<Tour> toursMock = new List<Tour>
             {
                 new Tour(0, "Name", "blablabla", "Filepath", 10, new List<TourLog>()),
@@ -62,7 +62,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Search_For_TourLog_Report()
         {
-            var tpMock = new Mock<TourPlannerManagerImpl>("Export.json", "Report.pdf");
+            var tpMock = new Mock<TourPlannerManagerImpl>("apikey","Export.json", "Report.pdf", ".");
             IList<Tour> toursMock = new List<Tour>
             {
                 new Tour(0, "Name", "blablabla", "Filepath", 10, new List<TourLog>()),

@@ -12,14 +12,15 @@ namespace WpfTourPlanner.BusinessLayer
             {
                 string exportFileName = ConfigurationManager.AppSettings["ExportFileName"];
                 string summaryReportFileName = ConfigurationManager.AppSettings["SummaryReportFileName"];
-
+                string mapQuestApiKey = ConfigurationManager.AppSettings["MapQuestApiKey"];
+                string workingDirectory = ConfigurationManager.AppSettings["WorkingDirectory"];
                 if (exportFileName != null)
                 {
-                    _manager = new TourPlannerManagerImpl(exportFileName, summaryReportFileName);
+                    _manager = new TourPlannerManagerImpl(mapQuestApiKey, exportFileName, summaryReportFileName, workingDirectory);
                 }
                 else
                 {
-                    _manager = new TourPlannerManagerImpl();
+                    _manager = new TourPlannerManagerImpl(mapQuestApiKey);
                 }
             }
 

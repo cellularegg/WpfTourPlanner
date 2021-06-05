@@ -14,7 +14,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Invalid_Import()
         {
-            TourPlannerManagerImpl tp = new TourPlannerManagerImpl();
+            TourPlannerManagerImpl tp = new TourPlannerManagerImpl(String.Empty);
             string filePath = "nonExistent.json";
             var ex = Assert.Throws<InvalidImportFileException>(() => tp.Import(filePath));
             Assert.That(ex.Message, Is.EqualTo($"Error the file ({filePath}) does not exist!"));

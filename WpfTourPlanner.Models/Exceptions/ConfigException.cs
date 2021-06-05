@@ -2,9 +2,9 @@
 
 namespace WpfTourPlanner.Models.Exceptions
 {
-    public class ConfigurationException : Exception
+    public class ConfigException : Exception
     {
-        public ConfigurationException(string message) : base(message)
+        public ConfigException(string message) : base($"Config Error: {message}")
         {
         }
     }

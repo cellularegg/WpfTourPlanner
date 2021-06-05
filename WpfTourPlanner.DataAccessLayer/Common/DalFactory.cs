@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
 using WpfTourPlanner.DataAccessLayer.Dao;
+using WpfTourPlanner.Models.Exceptions;
 
 namespace WpfTourPlanner.DataAccessLayer.Common
 {
@@ -15,7 +16,10 @@ namespace WpfTourPlanner.DataAccessLayer.Common
 
         static DalFactory()
         {
-            _assemblyName = ConfigurationManager.AppSettings["DalSqlAssembly"];
+            // var path = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).FilePath;
+            // Debug.WriteLine(path);
+            _assemblyName = ConfigurationManager.AppSettings["DalSqlAssembly"] ??
+                            throw new ConfigException("Error DalSqlAssembly not provided in App.config");
             // _assemblyName = "WpfTourPlanner.DataAccessLayer.PostgressSqlServer";
             // _assemblyName = CustomConfigurationManager.Instance.AssemblyName;
             Debug.WriteLine("---------------------------------------------------------------------------------");
@@ -36,12 +40,14 @@ namespace WpfTourPlanner.DataAccessLayer.Common
         private static IDatabase CreateDatabase()
         {
             string connectionString =
-                ConfigurationManager.ConnectionStrings["PostgressSqlConnectionString"].ConnectionString;
+                ConfigurationManager.ConnectionStrings["PostgressSqlConnectionString"]?.ConnectionString;
+            if (String.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new ConfigException("Error no connection string provided in App.config");
+            }
+
             Debug.WriteLine("---------------------------------------------------------------------------------");
             Debug.WriteLine(connectionString);
-            // connectionString =
-                // "Server=localhost;Port=5432;Database=postgres;User Id=postgres;Password=mysecretpassword;";
-            // string connectionString = CustomConfigurationManager.Instance.ConnectionString;
             return CreateDatabase(connectionString);
         }
 
@@ -49,21 +55,45 @@ namespace WpfTourPlanner.DataAccessLayer.Common
         {
             string dataBaseClassName = _assemblyName + ".Database";
             Type dbClass = _dalAssembly.GetType(dataBaseClassName);
-            return Activator.CreateInstance(dbClass, new object[] {connectionString}) as IDatabase;
+            try
+            {
+                return Activator.CreateInstance(dbClass, new object[] {connectionString}) as IDatabase;
+            }
+            catch (TargetInvocationException e)
+            {
+                Debug.WriteLine(e);
+                throw e.InnerException ?? e;
+            }
         }
 
         public static ITourDao CreateTourDao()
         {
             string className = _assemblyName + ".TourPostgressDao";
             Type tourType = _dalAssembly.GetType(className);
-            return Activator.CreateInstance(tourType) as ITourDao;
+            try
+            {
+                return Activator.CreateInstance(tourType) as ITourDao;
+            }
+            catch (TargetInvocationException e)
+            {
+                Debug.WriteLine(e);
+                throw e.InnerException ?? e;
+            }
         }
 
         public static ITourLogDao CreateTourLogDao()
         {
             string className = _assemblyName + ".TourLogPostgressDao";
             Type tourLogType = _dalAssembly.GetType(className);
-            return Activator.CreateInstance(tourLogType) as ITourLogDao;
+            try
+            {
+                return Activator.CreateInstance(tourLogType) as ITourLogDao;
+            }
+            catch (TargetInvocationException e)
+            {
+                Debug.WriteLine(e);
+                throw e.InnerException ?? e;
+            }
         }
     }
 }

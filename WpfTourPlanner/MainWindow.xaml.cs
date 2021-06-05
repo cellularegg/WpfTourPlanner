@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WpfTourPlanner.BusinessLayer;
+using WpfTourPlanner.Models.Exceptions;
 using WpfTourPlanner.Stores;
+using WpfTourPlanner.Util;
 using WpfTourPlanner.ViewModels;
 
 namespace WpfTourPlanner
@@ -27,7 +17,18 @@ namespace WpfTourPlanner
         {
             InitializeComponent();
             NavigationStore navigationStore = new NavigationStore();
-            navigationStore.CurrentViewModel = new HomeViewModel(TourPlannerFactory.GetTourPlannerManager(), navigationStore);
+            try
+            {
+                navigationStore.CurrentViewModel =
+                    new HomeViewModel(TourPlannerFactory.GetTourPlannerManager(), navigationStore);
+            }
+            catch (ConfigException e)
+            {
+                UtilMethods.ShowErrorMsgBox(e.Message);
+                Debug.WriteLine(e);
+                throw;
+            }
+
             this.DataContext = new MainViewModel(navigationStore);
         }
     }

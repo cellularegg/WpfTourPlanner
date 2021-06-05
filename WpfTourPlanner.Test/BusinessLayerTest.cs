@@ -14,7 +14,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Invalid_Import()
         {
-            TourPlannerManagerImpl tp = new TourPlannerManagerImpl();
+            TourPlannerManagerImpl tp = new TourPlannerManagerImpl(String.Empty);
             string filePath = "nonExistent.json";
             var ex = Assert.Throws<InvalidImportFileException>(() => tp.Import(filePath));
             Assert.That(ex.Message, Is.EqualTo($"Error the file ({filePath}) does not exist!"));
@@ -23,7 +23,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Search_For_Name()
         {
-            var tpMock = new Mock<TourPlannerManagerImpl>("Export.json", "Report.pdf");
+            var tpMock = new Mock<TourPlannerManagerImpl>("apikey","Export.json", "Report.pdf", ".");
             IList<Tour> toursMock = new List<Tour>
             {
                 new Tour(0, "Name", "Descr1", "Filepath", 10, new List<TourLog>()),
@@ -42,7 +42,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Search_For_Description()
         {
-            var tpMock = new Mock<TourPlannerManagerImpl>("Export.json", "Report.pdf");
+            var tpMock = new Mock<TourPlannerManagerImpl>("apikey","Export.json", "Report.pdf", ".");
             IList<Tour> toursMock = new List<Tour>
             {
                 new Tour(0, "Name", "blablabla", "Filepath", 10, new List<TourLog>()),
@@ -62,7 +62,7 @@ namespace WpfTourPlanner.Test
         [Test]
         public void Test_Search_For_TourLog_Report()
         {
-            var tpMock = new Mock<TourPlannerManagerImpl>("Export.json", "Report.pdf");
+            var tpMock = new Mock<TourPlannerManagerImpl>("apikey","Export.json", "Report.pdf", ".");
             IList<Tour> toursMock = new List<Tour>
             {
                 new Tour(0, "Name", "blablabla", "Filepath", 10, new List<TourLog>()),

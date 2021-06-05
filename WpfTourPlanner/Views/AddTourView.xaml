@@ -1,15 +1,66 @@
 ﻿<UserControl x:Class="WpfTourPlanner.Views.AddTourView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:WpfTourPlanner.Views"
-             mc:Ignorable="d" 
+             xmlns:viewModels="clr-namespace:WpfTourPlanner.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=viewModels:AddTourViewModel}"
+
              d:DesignHeight="720" d:DesignWidth="1080">
-    <Grid>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock  Text="Create Tour View!" Padding="10" />
-            <Button Content="Back" Padding="10" Command="{Binding NavigateHomeCommand}"/>
-        </StackPanel>
+    <Grid ShowGridLines="False">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" FontSize="24" VerticalAlignment="Center"
+                   HorizontalAlignment="Center" Text="Create a new Tour" Margin="5" />
+        <Label Grid.Row="1" Grid.Column="0" Content="Name:" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <TextBox Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Center"
+                 Text="{Binding TourName, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
+               Content="Description:" Margin="5" />
+        <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="5"
+                 TextWrapping="Wrap" AcceptsReturn="True" MinHeight="60"
+                 Text="{Binding TourDescription, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Label Grid.Row="3" Grid.Column="0" Content="From:" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="5" VerticalAlignment="Center"
+                 Text="{Binding TourFromLocation, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Label Grid.Row="4" Grid.Column="0" Content="To:" VerticalAlignment="Center" HorizontalAlignment="Right" />
+        <TextBox Grid.Row="4" Grid.Column="1" Margin="5" VerticalAlignment="Center"
+                 Text="{Binding TourToLocation, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Label Grid.Row="5" Grid.Column="0" Content="Distance in km:" VerticalAlignment="Center"
+               HorizontalAlignment="Right" />
+        <TextBox Grid.Row="5" Grid.Column="1" Margin="5" VerticalAlignment="Center"
+                 Text="{Binding TourDistanceInKm, Mode=OneWay}" IsReadOnly="True" />
+
+        <Label Grid.Row="6" Grid.Column="0" Content="Status Message:" VerticalAlignment="Center"
+               HorizontalAlignment="Right" />
+        <Label Grid.Row="6" Grid.Column="1" Content="{Binding StatusMessage}" Foreground="Red"/>
+        <Button Grid.Row="7" Grid.Column="1" Width="Auto" HorizontalAlignment="Left" VerticalAlignment="Center"
+                Content="Back" Margin="5" Command="{Binding NavigateHomeCommand}" />
+        <Button Grid.Row="7" Grid.Column="1" Width="Auto" HorizontalAlignment="Right" VerticalAlignment="Center"
+                Content="➕ Add" Margin="5" Command="{Binding AddTourCommand}" />
+
+        <Button Grid.Row="7" Grid.Column="1" Width="Auto" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Content="Calculate Distance" Margin="5" Command="{Binding CalculateDistanceCommand}" />
+        <ProgressBar Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Height="5" Margin="5"
+                     IsIndeterminate="{Binding AsyncCommandIsExecuting}" VerticalAlignment="Bottom" />
     </Grid>
 </UserControl>

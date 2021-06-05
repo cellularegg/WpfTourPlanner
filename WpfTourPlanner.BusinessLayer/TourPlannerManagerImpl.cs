@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.DirectoryServices.ActiveDirectory;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Markup;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using QuestPDF.Fluent;
 using WpfTourPlanner.BusinessLayer.DocumentTemplates;
 using WpfTourPlanner.DataAccessLayer.Common;
@@ -20,12 +26,27 @@ namespace WpfTourPlanner.BusinessLayer
         private readonly string _exportFileName;
 
         private readonly string _summaryReportFileName;
+        private readonly string _mapQuestApiKey;
+        private readonly string _workingDirectory;
 
-        public TourPlannerManagerImpl(string exportFileName = "WpfTourPlanner.Json",
-            string summaryReportFileName = "Report.pdf")
+        public TourPlannerManagerImpl(string mapQuestApiKey, string exportFileName = "WpfTourPlanner.Json",
+            string summaryReportFileName = "Report.pdf", string workingDirectory = null)
         {
             _exportFileName = exportFileName;
             _summaryReportFileName = summaryReportFileName;
+            _mapQuestApiKey = mapQuestApiKey;
+            if (workingDirectory == null)
+            {
+                _workingDirectory = Directory.GetCurrentDirectory();
+            }
+            else
+            {
+                _workingDirectory = workingDirectory;
+                if (!Directory.Exists(_workingDirectory))
+                {
+                    Directory.CreateDirectory(_workingDirectory);
+                }
+            }
         }
 
         public virtual IEnumerable<Tour> GetTours()
@@ -117,6 +138,7 @@ namespace WpfTourPlanner.BusinessLayer
             {
                 return false;
             }
+
             // Check if tour image exists
             if (File.Exists(tourToDelete.Information))
             {
@@ -135,6 +157,7 @@ namespace WpfTourPlanner.BusinessLayer
                     Debug.WriteLine(e);
                 }
             }
+
             return tourDao.DeleteTour(tourId);
         }
 
@@ -245,6 +268,61 @@ namespace WpfTourPlanner.BusinessLayer
             document.GeneratePdf(filePath);
 
             return true;
+        }
+
+        public async Task<double> GetTourDistance(string fromLocation, string toLocation)
+        {
+            using HttpClient client = new HttpClient();
+            string requestUrl = $"http://www.mapquestapi.com/directions/v2/route?key={_mapQuestApiKey}&unit=km&" +
+                                $"from={fromLocation}&to={toLocation}";
+            HttpResponseMessage response = await client.GetAsync(requestUrl);
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+            JObject parsedResult = JObject.Parse(jsonResponse);
+            double dist = parsedResult["route"]?["distance"]?.Value<double>() ?? -1;
+            return dist;
+        }
+
+        public async Task<Tour> CreateTour(string name, string description, string fromLocation, string toLocation)
+        {
+            using HttpClient client = new HttpClient();
+            // Directions API
+            string requestUrl = $"http://www.mapquestapi.com/directions/v2/route?key={_mapQuestApiKey}&unit=km&" +
+                                $"from={fromLocation}&to={toLocation}";
+            HttpResponseMessage response = await client.GetAsync(requestUrl);
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+            JObject parsedResult = JObject.Parse(jsonResponse);
+            double? dist = parsedResult["route"]?["distance"]?.Value<double>();
+            double? ulLat = parsedResult["route"]?["boundingBox"]?["ul"]?["lat"]?.Value<double>();
+            double? ulLng = parsedResult["route"]?["boundingBox"]?["ul"]?["lng"]?.Value<double>();
+            double? lrLat = parsedResult["route"]?["boundingBox"]?["lr"]?["lat"]?.Value<double>();
+            double? lrLng = parsedResult["route"]?["boundingBox"]?["lr"]?["lng"]?.Value<double>();
+            string sessionId = parsedResult["route"]?["sessionId"]?.Value<string>();
+            if (dist == null || (dist is 0) || ulLat == null || ulLng == null || lrLat == null || lrLng == null || sessionId == null)
+            {
+                return null;
+            }
+
+            string imgFormat = "jpg";
+            requestUrl = $"https://www.mapquestapi.com/staticmap/v5/map?key={_mapQuestApiKey}&size=600,600&" +
+                         $"session={sessionId}&boundingBox{ulLat},{ulLng},{lrLat},{lrLng}&format={imgFormat}";
+            response = await client.GetAsync(requestUrl);
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            byte[] byteResponse = await response.Content.ReadAsByteArrayAsync();
+            string filePath = Path.Join(_workingDirectory, $"{Guid.NewGuid().ToString()}.{imgFormat}");
+            await File.WriteAllBytesAsync(filePath, byteResponse);
+            if (!File.Exists(filePath))
+            {
+                return null;
+            }
+
+            return CreateTour((string) name, (string) description, (string) filePath, (double) dist);
         }
 
         private static bool CrateDirectory(string folderPath)

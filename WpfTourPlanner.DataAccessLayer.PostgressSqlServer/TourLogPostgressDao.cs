@@ -98,8 +98,6 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
                 Debug.WriteLine(e);
                 throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
             }
-
-            return null;
         }
 
         public bool DeleteTourLog(int tourLogId)

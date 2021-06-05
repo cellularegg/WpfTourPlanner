@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Input;
 using WpfTourPlanner.BusinessLayer;
+using WpfTourPlanner.Commands;
 using WpfTourPlanner.Models;
 using WpfTourPlanner.Stores;
 using WpfTourPlanner.Util;

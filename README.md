@@ -24,6 +24,7 @@ Time Tracking:
 | 03-jun-21 | 1.5       | Added copy and delete for Images                                      |
 | 03-jun-21 | 2         | Added basic navigation                                                |
 | 04-jun-21 | 7         | Added Create and edit of TourLog functionality + fixed Image deletion |
+| 05-jun-21 | 5         | Added create tour feature + async api call to mapquest api            |
 
 
 ## Todo
@@ -36,16 +37,17 @@ Time Tracking:
 * ~~Does not allow for SQL injection~~
 * ~~Does not use an OR-Mapping Library~~
 * ~~Uses a config file that stores at minimum the DB connection string~~
-* **Integrates the MapQuest API**
+* ~~Integrates the MapQuest API~~
 * **Integrates log4j/log4net or similar Log Lib**
 * ~~Implements at least 20 Unit Tests~~
   
 ### Optional
-* Create Tours 
-* Create, update logs
+* Export as Json including Image (base64)
+* ~~Create Tours~~
+* ~~Create, update logs~~
 * ~~Navigation~~ -> basics done
-* Error Handling / Custom Exceptions -> partly done
-* Async API Call
+* ~~Error Handling / Custom Exceptions~~ -> partly done
+* ~~Async API Call~~
 * ~~Delete images on Tour delete~~  
 * ~~import export~~
 * ~~pdf report generation~~

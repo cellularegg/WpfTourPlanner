@@ -9,7 +9,7 @@
   <Identity
     Name="38dab90b-98cf-473e-a094-2d2f64352537"
     Publisher="CN=zeleodav"
-    Version="1.0.6.0" />
+    Version="1.0.8.0" />
 
   <Properties>
     <DisplayName>WpfTourPlanner</DisplayName>

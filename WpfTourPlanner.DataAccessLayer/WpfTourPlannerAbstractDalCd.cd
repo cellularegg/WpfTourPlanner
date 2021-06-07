@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WpfTourPlanner.DataAccessLayer.Common.DalFactory">
+    <Position X="8.5" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAEAAEAAEAAgAAAQAAABAAAAAEAA=</HashCode>
+      <FileName>Common\DalFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="WpfTourPlanner.DataAccessLayer.Common.IDatabase">
+    <Position X="6" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAEAAAAAAABAAABAAAAgAAAAQA=</HashCode>
+      <FileName>Common\IDatabase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WpfTourPlanner.DataAccessLayer.Dao.ITourDao">
+    <Position X="2.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAIAIEAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dao\ITourDao.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="WpfTourPlanner.DataAccessLayer.Dao.ITourLogDao">
+    <Position X="4.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAABAABAAAAAAAAAAAAAAAAhQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dao\ITourLogDao.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

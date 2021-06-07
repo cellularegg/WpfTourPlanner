@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Configuration;
+using log4net;
 using WpfTourPlanner.Models.Exceptions;
 
 namespace WpfTourPlanner.BusinessLayer
 {
     public static class TourPlannerFactory
     {
+        private static readonly ILog Log =
+            LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
         private static ITourPlannerManager _manager;
 
         public static ITourPlannerManager GetTourPlannerManager()
@@ -22,6 +25,10 @@ namespace WpfTourPlanner.BusinessLayer
                                             $"Mapquest Api key environment variable not set! Name of " +
                                             $"environment variable: {mapQuestEnvironmentVarName}");
                 string workingDirectory = ConfigurationManager.AppSettings["WorkingDirectory"];
+                Log.Info($"Creating a new tour planner manager with the following parameters: exportFileName=" +
+                          $"{exportFileName}, summaryReportFileName={summaryReportFileName}, " +
+                          $"mapQuestEnvironmentVarName={mapQuestEnvironmentVarName}, for mapQuestApiKey look in the " +
+                          $"user environment variables.");
                 if (exportFileName != null)
                 {
                     _manager = new TourPlannerManagerImpl(mapQuestApiKey, exportFileName, summaryReportFileName,
@@ -32,6 +39,8 @@ namespace WpfTourPlanner.BusinessLayer
                     _manager = new TourPlannerManagerImpl(mapQuestApiKey);
                 }
             }
+            
+            Log.Info($"Returning {_manager}");
 
             return _manager;
         }

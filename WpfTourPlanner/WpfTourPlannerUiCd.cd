@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WpfTourPlanner.Commands.AsyncRelayCommand" BaseTypeListCollapsed="true">
+    <Position X="26" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAQAQAAAAACgAQAAEQAAAAAAAAAAAAQAAAAAAAAAEA=</HashCode>
+      <FileName>Commands\AsyncRelayCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WpfTourPlanner.Commands.RelayCommand" BaseTypeListCollapsed="true">
+    <Position X="23.75" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAIAQAAAAACAAQAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\RelayCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WpfTourPlanner.Stores.NavigationStore">
+    <Position X="26" Y="5.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAIEAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Stores\NavigationStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.Util.StringToImageSourceConverter" BaseTypeListCollapsed="true">
+    <Position X="23.75" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Util\StringToImageSourceConverter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="WpfTourPlanner.Util.UtilMethods">
+    <Position X="23.75" Y="6.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Util\UtilMethods.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.ViewModels.AddTourLogViewModel">
+    <Position X="17" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>pAARIIKAQAAAQgAAIAAEAAAAQAAQAAEABBGAAggQFIA=</HashCode>
+      <FileName>ViewModels\AddTourLogViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.ViewModels.AddTourViewModel">
+    <Position X="19.5" Y="3.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAIACAAAAAAAACEEECBgAAAABAAAEQAAAKEYANIAEwA=</HashCode>
+      <FileName>ViewModels\AddTourViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.ViewModels.HomeViewModel">
+    <Position X="10.75" Y="3.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>IEUCQAACgAAAxCwBSCBFGDARBhgAkAQAliGQEAEUEEE=</HashCode>
+      <FileName>ViewModels\HomeViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.ViewModels.MainViewModel">
+    <Position X="14.25" Y="3.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIEAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>ViewModels\MainViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.ViewModels.ViewModelBase">
+    <Position X="15.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAQAAAAAAAAgAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModels\ViewModelBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

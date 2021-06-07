@@ -6,6 +6,8 @@ using WpfTourPlanner.Stores;
 using WpfTourPlanner.Util;
 using WpfTourPlanner.ViewModels;
 
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
+
 namespace WpfTourPlanner
 {
     /// <summary>
@@ -15,6 +17,7 @@ namespace WpfTourPlanner
     {
         public MainWindow()
         {
+            log4net.Config.XmlConfigurator.Configure();
             InitializeComponent();
             NavigationStore navigationStore = new NavigationStore();
             try

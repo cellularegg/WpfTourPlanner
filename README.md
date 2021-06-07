@@ -1,6 +1,37 @@
 # WpfTourPlanner Documentation
 ## Architecture
 The Application has a layer based architecture: user interface - business logic - data access. The division into those three layers enables the possibility to easily exchange and modify layers. For example if a terminal "UI" is needed in the future all the other layers could be reused and only the UI layer would need to be changed / newly developed. Another example is if the requirement of a different data access method arises. This layered architecture enables the possibility of easily swapping out the PostgreSQL data access layer for a e.g. SQLite data access layer.
+
+The Solution contains 7 projects:
+### WpfTourPlanner
+UI layer, WPF project containing views and view models.
+Class Diagram:
+![User interface class diagram](./imgs/WpfTourPlannerUiCd.png)
+
+### WpfTourPlanner.BusinessLayer
+Business logic layer, class library containing the business logic.
+![Business layer class diagram](./imgs/WpfTourPlannerBlCd.png)
+
+
+### WpfTourPlanner.DatAccessLayer
+Abstract data access layer provides interfaces for the DAL also provides the factory that creates the DAL implementation.
+![Abstract DAL class diagram](./imgs/WpfTourPlannerAbstractDalCd.png)
+
+
+### WpfTourPlannerDataAccessLayer.PostgressSqlServer
+PostgreSQL implementation of the DAL.
+![PostgreSQL DAL class diagram](./imgs/WpfTourPlannerPostgreSqlDalCd.png)
+
+### WpfTourPlanner.Models
+Containing the Models and Exceptions used by all layers.
+![Models class diagram](./imgs/WpfTourPlannerModelsCd.png)
+
+### WpfTourPlanner.Package
+Windows Application Package Project to publish the MSIX installer.
+
+### WpfTourPlanner.Test
+NUnit Test Project for unit tests.
+
 ## UX / library decisions
 ### PDF generation: [QuestPDF](https://www.questpdf.com/)
 QuestPDF seemed (and is) easy to use and is open source
@@ -51,32 +82,4 @@ Time Tracking:
 | 04-jun-21 | 7         | Added Create and edit of TourLog functionality + fixed Image deletion        |
 | 05-jun-21 | 5         | Added create tour feature + async api call to mapquest api                   |
 | 05-jun-21 | 4         | Fixed msix installer (by including app.config in repo) + wrote documentation |
-
-
-## Todo
-### Mandatory
-* ~~Uses markup-Based UI framework~~
-* ~~Uses MVVM for UI~~
-* ~~Implements a layer-based architecture (UI/BL/DAL)~~
-* ~~Implements at least one design pattern~~
-* ~~Uses a Postgres Database for storing Tour Data~~
-* ~~Does not allow for SQL injection~~
-* ~~Does not use an OR-Mapping Library~~
-* ~~Uses a config file that stores at minimum the DB connection string~~
-* ~~Integrates the MapQuest API~~
-* **Integrates log4j/log4net or similar Log Lib**
-* ~~Implements at least 20 Unit Tests~~
-  
-### Optional
-* Write documentation + update wiki after logging has been added
-* Export as Json including Image (base64)
-* ~~Create Tours~~
-* ~~Create, update logs~~
-* ~~Navigation~~ -> basics done
-* ~~Error Handling / Custom Exceptions~~ -> partly done
-* ~~Async API Call~~
-* ~~Delete images on Tour delete~~  
-* ~~import export~~
-* ~~pdf report generation~~
-* ~~custom ui component~~ -> done image + caption
-* ~~config file~~ -> using App.confing
+| 06-jun-21 | 6         | Added logging + documentation                                                |

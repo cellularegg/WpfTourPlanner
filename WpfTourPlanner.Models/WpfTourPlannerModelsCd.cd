@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="WpfTourPlanner.Models.Exceptions.ConfigException">
+    <Position X="10.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\ConfigException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.Models.Exceptions.DatabaseException">
+    <Position X="12.25" Y="5.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\DatabaseException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.Models.Exceptions.InvalidImportFileException">
+    <Position X="14.25" Y="5.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\InvalidImportFileException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.Models.Tour">
+    <Position X="6" Y="5.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACEAAQAAAgAAAEAAAAAAQAAAAAAAAAAAIAAIAAAAA=</HashCode>
+      <FileName>Tour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WpfTourPlanner.Models.TourLog">
+    <Position X="8" Y="5.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAADABDAAAAAAAAEAAAEAAAAAAAQAAEAAAKEAgAABIA=</HashCode>
+      <FileName>TourLog.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

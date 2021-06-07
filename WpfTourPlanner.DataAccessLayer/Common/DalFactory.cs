@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
+using log4net;
 using WpfTourPlanner.DataAccessLayer.Dao;
 using WpfTourPlanner.Models.Exceptions;
 
@@ -9,21 +10,21 @@ namespace WpfTourPlanner.DataAccessLayer.Common
 {
     public class DalFactory
     {
-        // TODO Write own config manager!
+        private static readonly ILog Log =
+            LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
+
         private static string _assemblyName;
         private static Assembly _dalAssembly;
         private static IDatabase _database;
 
         static DalFactory()
         {
-            // var path = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).FilePath;
-            // Debug.WriteLine(path);
-            _assemblyName = ConfigurationManager.AppSettings["DalSqlAssembly"] ??
-                            throw new ConfigException("Error DalSqlAssembly not provided in App.config");
-            // _assemblyName = "WpfTourPlanner.DataAccessLayer.PostgressSqlServer";
-            // _assemblyName = CustomConfigurationManager.Instance.AssemblyName;
-            Debug.WriteLine("---------------------------------------------------------------------------------");
-            Debug.WriteLine(_assemblyName);
+            _assemblyName = ConfigurationManager.AppSettings["DalSqlAssembly"];
+            if (String.IsNullOrWhiteSpace(_assemblyName))
+            {
+                Log.Error("DalSqlAssembly key was not provided in App.config.");
+                throw new ConfigException("Error DalSqlAssembly not provided in App.config");
+            }
             _dalAssembly = Assembly.Load(_assemblyName);
         }
 
@@ -43,11 +44,10 @@ namespace WpfTourPlanner.DataAccessLayer.Common
                 ConfigurationManager.ConnectionStrings["PostgressSqlConnectionString"]?.ConnectionString;
             if (String.IsNullOrWhiteSpace(connectionString))
             {
+                Log.Error("Error no connection string provided in App.config (with the key " +
+                          "\"PostgressSqlConnectionString\").");
                 throw new ConfigException("Error no connection string provided in App.config");
             }
-
-            Debug.WriteLine("---------------------------------------------------------------------------------");
-            Debug.WriteLine(connectionString);
             return CreateDatabase(connectionString);
         }
 
@@ -61,7 +61,9 @@ namespace WpfTourPlanner.DataAccessLayer.Common
             }
             catch (TargetInvocationException e)
             {
-                Debug.WriteLine(e);
+                // Debug.WriteLine(e);
+                Log.Error($"Error when trying to create an instance of the Database using reflection " +
+                          $"{nameof(dataBaseClassName)}={dataBaseClassName}");
                 throw e.InnerException ?? e;
             }
         }
@@ -76,7 +78,9 @@ namespace WpfTourPlanner.DataAccessLayer.Common
             }
             catch (TargetInvocationException e)
             {
-                Debug.WriteLine(e);
+                // Debug.WriteLine(e);
+                Log.Error($"Error when trying to create an instance of the Database using reflection " +
+                          $"{nameof(className)}={className}");
                 throw e.InnerException ?? e;
             }
         }
@@ -91,7 +95,9 @@ namespace WpfTourPlanner.DataAccessLayer.Common
             }
             catch (TargetInvocationException e)
             {
-                Debug.WriteLine(e);
+                // Debug.WriteLine(e);
+                Log.Error($"Error when trying to create an instance of the Database using reflection " +
+                          $"{nameof(className)}={className}");
                 throw e.InnerException ?? e;
             }
         }

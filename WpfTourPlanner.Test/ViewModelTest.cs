@@ -14,8 +14,6 @@ namespace WpfTourPlanner.Test
 {
     public class ViewModelTest
     {
-        // ToDo mock database / tourplannermanager to return static list of tours + logs
-        // ToDo test setters of TourName, TourDescription and TourDistance
         private Mock<ITourPlannerManager> _tourPlannerManager;
         private IList<Tour> _toursMock;
         private NavigationStore _navigationStore;

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using Npgsql;
 using WpfTourPlanner.DataAccessLayer.Common;
@@ -87,27 +85,6 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             {
                 return false;
             }
-
-            // // Check if tour image exists
-            // if (File.Exists(tourToDelete.Information))
-            // {
-            //     try
-            //     {
-            //         // Try to delete the image
-            //         File.Delete(tourToDelete.Information);
-            //     }
-            //     // 
-            //     catch (UnauthorizedAccessException e)
-            //     {
-            //         Console.WriteLine(e);
-            //     }
-            //     catch (IOException e)
-            //     {
-            //         Debug.WriteLine(e);
-            //     }
-            // }
-
-
             try
             {
                 DbCommand deleteCommand = _database.CreateCommand(SQL_DELETE_TOUR);
@@ -120,33 +97,6 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
                 throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
             }
         }
-
-        // public Tour DuplicateTour(Tour tour)
-        // {
-        //     // string newFilePath = string.Empty;
-        //     // if (File.Exists(tour.Information) && Path.GetDirectoryName(tour.Information) != null)
-        //     // {
-        //     //     newFilePath = Path.Combine(Path.GetDirectoryName(tour.Information),
-        //     //         Path.GetFileNameWithoutExtension(tour.Information) + "_copy" + Path.GetExtension(tour.Information));
-        //     //     File.Copy(tour.Information, newFilePath, true);
-        //     // }
-        //
-        //     Tour newlyCreatedTour = this.AddNewTour(tour.Name + " Copy", tour.Description, newFilePath, tour.DistanceInKm);
-        //
-        //     if (newlyCreatedTour != null)
-        //     {
-        //         foreach (TourLog log in tour.Logs)
-        //         {
-        //             _tourLogDao.AddNewTourLog(log.Report + " Copy", log.LogDateTime, log.TotalTimeInH, log.Rating,
-        //                 log.HeartRate, log.AverageSpeedInKmH, log.TemperatureInC, log.Breaks, log.Steps,
-        //                 newlyCreatedTour.Id);
-        //             newlyCreatedTour.Logs.Add(log);
-        //         }
-        //     }
-        //
-        //     return newlyCreatedTour;
-        // }
-
 
         public Tour FindById(int tourId)
         {

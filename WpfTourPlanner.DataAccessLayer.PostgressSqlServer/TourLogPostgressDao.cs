@@ -7,6 +7,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using log4net;
 using Npgsql;
 using WpfTourPlanner.DataAccessLayer.Common;
 using WpfTourPlanner.DataAccessLayer.Dao;
@@ -17,6 +18,9 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
 {
     public class TourLogPostgressDao : ITourLogDao
     {
+        private static readonly ILog Log =
+            LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()?.DeclaringType);
+        
         private const string SQL_FIND_BY_ID = "SELECT * FROM public.\"TourLog\" WHERE \"Id\"=@Id;";
 
         private const string SQL_FIND_BY_TOUR =
@@ -95,7 +99,7 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             }
             catch (NpgsqlException e)
             {
-                Debug.WriteLine(e);
+                Log.Error("Database Error!",e);
                 throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
             }
         }
@@ -110,7 +114,7 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             }
             catch (NpgsqlException e)
             {
-                Debug.WriteLine(e);
+                Log.Error("Database Error!",e);
                 throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
             }
         }
@@ -167,7 +171,7 @@ namespace WpfTourPlanner.DataAccessLayer.PostgressSqlServer
             }
             catch (NpgsqlException e)
             {
-                Debug.WriteLine(e);
+                Log.Error("Database Error!",e);
                 throw new DatabaseException($"Error with the database!{Environment.NewLine}{e.Message}");
             }
         }

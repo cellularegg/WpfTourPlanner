@@ -1,4 +1,27 @@
 # WpfTourPlanner Documentation
+
+## Table of Contents
+- [Table of contents](#table-of-contents)
+- [Architecture](#architecture)
+    * [WpfTourPlanner](#wpftourplanner)
+    * [WpfTourPlanner.BusinessLayer](#wpftourplannerbusinesslayer)
+    * [WpfTourPlanner.DatAccessLayer](#wpftourplannerdataccesslayer)
+    * [WpfTourPlannerDataAccessLayer.PostgressSqlServer](#wpftourplannerdataaccesslayerpostgresssqlserver)
+    * [WpfTourPlanner.Models](#wpftourplannermodels)
+    * [WpfTourPlanner.Package](#wpftourplannerpackage)
+    * [WpfTourPlanner.Test](#wpftourplannertest)
+- [UX / library decisions](#ux---library-decisions)
+    * [PDF generation](#pdf-generation)
+    * [JSON](#json)
+    * [Logging](#logging)
+    * [Additional WPF Dialog](#additional-wpf-dialog)
+    * [UX](#ux)
+- [Design pattern](#design-pattern)
+- [Unique feature](#unique-feature)
+- [Initial Setup Guide](#initial-setup-guide)
+    * [App.config elements](#appconfig-elements)
+- [Time Tracking](#time-tracking)
+
 ## Architecture
 The Application has a layer based architecture: user interface - business logic - data access. The division into those three layers enables the possibility to easily exchange and modify layers. For example if a terminal "UI" is needed in the future all the other layers could be reused and only the UI layer would need to be changed / newly developed. Another example is if the requirement of a different data access method arises. This layered architecture enables the possibility of easily swapping out the PostgreSQL data access layer for a e.g. SQLite data access layer.
 
@@ -49,11 +72,14 @@ The following components were tested:
   * Input validation tests (CanExecute... methods are tested)
 
 ## UX / library decisions
-### PDF generation: [QuestPDF](https://www.questpdf.com/)
-QuestPDF seemed (and is) easy to use and is open source
-### JSON: [Newtonsoft JSON](https://www.newtonsoft.com/json)
-### Logging: [log4net](https://logging.apache.org/log4net/)
-### Additional WPF Dialog: [Ookii.Dialogs.Wpf](https://github.com/ookii-dialogs/ookii-dialogs-wpf)
+### PDF generation
+**[QuestPDF](https://www.questpdf.com/)** seemed (and is) easy to use and is open source
+### JSON
+**[Newtonsoft JSON](https://www.newtonsoft.com/json)**
+### Logging
+**[log4net](https://logging.apache.org/log4net/)**
+### Additional WPF Dialog
+**[Ookii.Dialogs.Wpf](https://github.com/ookii-dialogs/ookii-dialogs-wpf)** \
 I do not like the default Windows 10 folder browser dialog so used this library to use the old folder explorer
 ### UX
 Regarding UX emojis were used to emphasize the function of a button (e.g. 💾 for save)
@@ -64,9 +90,10 @@ Factories were used to get instances of the respective layers. There is one Fact
 
 ## Unique feature
 CI/CD Pipeline using GitHub Actions.
-As a unique feature I chose to setup a continues integration and delivery pipeline using GitHub Actions. I wanted to create automatic Releases (compiled binaries) when pushing a new tag to the git repo. Furthermore unit tests should also be executed automatically. With a Windows application package a msix installer is compiled and provided as a zip folder to download. The application is released for both x86 and x64 systems. However due to a bug in .NET 5 and the MSIX packaging tool continues integration (automatic execution of unit tests and creating a msix installer in with Debug configuration) only works for x86, but this is not that big of an issue since x64 platforms can execute x86 applications. For further details regarding this bug see:
-Fixed but not released yet: [.NET 5 MSB4044 GitHub Issue](https://github.com/dotnet/sdk/issues/18031)
-No answer yet: [MSIX GitHub Issue regarding MSB4044 error](https://github.com/microsoft/MSIX-PackageSupportFramework/issues/180)
+As a unique feature I chose to setup a continues integration and delivery pipeline using GitHub Actions. I wanted to create automatic Releases (compiled binaries) when pushing a new tag to the git repo. Furthermore unit tests should also be executed automatically. With a Windows application package a msix installer is compiled and provided as a zip folder to download. The application is released for both x86 and x64 systems. However due to a bug in .NET 5 and the MSIX packaging tool continues integration (automatic execution of unit tests and creating a msix installer in with Debug configuration) only works for x86, but this is not that big of an issue since x64 platforms can execute x86 applications. For further details regarding this bug see:\
+Fixed but not released yet: [.NET 5 MSB4044 GitHub Issue](https://github.com/dotnet/sdk/issues/18031) \
+No answer yet: [MSIX GitHub Issue regarding MSB4044 error](https://github.com/microsoft/MSIX-PackageSupportFramework/issues/180) \
+For more information on how to setup GH Actions for a WPF App see [this example from Microsoft](https://github.com/microsoft/github-actions-for-desktop-apps)
 
 ## Initial Setup Guide
 1. Clone the Project: (`git clone https://github.com/cellularegg/WpfTourPlanner.git`)
@@ -88,6 +115,7 @@ In the App.config all settings are stored. The following keys are expected under
 * "**MapQuestEnvironmentVarName**" The environment variable name of the environment variable containing the MapQuest API key. The API key is stored as an environment variable so I can release working UWP Apps while keeping my API key a secret. 
 Additionally configuration for log4net see [official documentation](https://logging.apache.org/log4net/release/manual/configuration.html)
 
+<a name="time-tracking"></a>
 ## Time Tracking
 Time Tracking:
 | Date      | time in h | Note                                                                         |
